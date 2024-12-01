@@ -1,0 +1,26 @@
+{
+  "name": "previews",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/previews/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "previews:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "previews:build:development"
+        },
+        "production": {
+          "buildTarget": "previews:build:production"
+        }
+      }
+    }
+  }
+}

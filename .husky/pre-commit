@@ -2,7 +2,7 @@
 # shellcheck disable=SC1091
 . "$(dirname -- "$0")/_/husky.sh"
 echo "Running husky:pre-commit hook"
-# 获取当前分支的名称，并将其存储在 branch 变量中
+# 获取当前分支的名称，并将其存储在 branch 变量中,首次提交时没有分支，可以注释掉这一行
 branch="$(git rev-parse --abbrev-ref HEAD)"
 echo "当前分支: $branch"
 # 检查是否存在提交历史
