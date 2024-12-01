@@ -2,14 +2,6 @@
   "name": "@aiofc-nx-1201/source",
   "$schema": "node_modules/nx/schemas/project-schema.json",
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,js,jsx}"],
-        "eslintConfig": "eslint.config.js"
-      }
-    },
     "sherif:ws-fix": {
       "executor": "nx:run-commands",
       "options": {
