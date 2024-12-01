@@ -1,0 +1,47 @@
+{
+  "name": "@aiofc-nx-v20rc-1201/source",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "packageManager": "pnpm@9.13.2",
+  "volta": {
+    "node": "20.16.0",
+    "pnpm": "9.13.2"
+  },
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/config-nx-scopes": "^19.5.0",
+    "@nx/eslint": "20.0.0-rc.0",
+    "@nx/eslint-plugin": "20.0.0-rc.0",
+    "@nx/js": "20.0.0-rc.0",
+    "@nx/node": "20.0.0-rc.0",
+    "@nx/workspace": "20.0.0-rc.0",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
+    "commitizen": "^4.3.1",
+    "cz-customizable": "^7.2.1",
+    "eslint": "~9.16.0",
+    "husky": "^8.0.0",
+    "nx": "20.0.0-rc.0",
+    "prettier": "^2.6.2",
+    "typescript": "~5.5.2",
+    "typescript-eslint": "^8.16.0"
+  },
+  "nx": {},
+  "dependencies": {}
+}
