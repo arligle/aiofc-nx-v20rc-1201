@@ -6,10 +6,12 @@ import { typedConfigModuleForRoot } from '@aiofc/config';
 import rootConfig from '../config/root.config';
 import { AcceptLanguageResolver, HeaderResolver, I18nJsonLoader, I18nModule, QueryResolver } from '@aiofc/i18n';
 import { join } from 'path';
+import { Logger, loggerModuleForRootAsync } from '@aiofc/logger';
 
 @Module({
   imports: [
     typedConfigModuleForRoot(__dirname, rootConfig),
+    loggerModuleForRootAsync(),
     // i18nModuleForRootAsync(__dirname),
     I18nModule.forRoot({
       fallbackLanguage: 'zh',
@@ -26,6 +28,6 @@ import { join } from 'path';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,Logger],
 })
 export class AppModule {}

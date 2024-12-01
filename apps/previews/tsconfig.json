@@ -3,8 +3,9 @@
   "files": [],
   "include": [],
   "references": [
-    { "path": "../../packages/i18n" },
+    { "path": "../../packages/logger" },
     { "path": "../../packages/config" },
+    { "path": "../../packages/i18n" },
     { "path": "./tsconfig.app.json" }
   ],
   "compilerOptions": {

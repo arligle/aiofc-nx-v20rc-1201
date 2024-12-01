@@ -5,6 +5,7 @@
   "references": [
     { "path": "./packages/config" },
     { "path": "./apps/previews" },
-    { "path": "./packages/i18n" }
+    { "path": "./packages/i18n" },
+    { "path": "./packages/logger" }
   ]
 }
