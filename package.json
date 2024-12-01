@@ -81,6 +81,7 @@
     "@aiofc/config": "workspace:*",
     "@aiofc/i18n": "workspace:*",
     "@aiofc/logger": "workspace:*",
+    "@aiofc/exceptions": "workspace:*",
     "@faker-js/faker": "^9.2.0",
     "@fastify/helmet": "^11.0.0",
     "@grpc/grpc-js": "^1.12.2",
