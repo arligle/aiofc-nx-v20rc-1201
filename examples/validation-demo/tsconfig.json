@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "../../packages/exceptions" },
+    { "path": "../../packages/i18n" },
+    { "path": "../../packages/validation" },
+    { "path": "./tsconfig.app.json" }
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "esModuleInterop": true
+  }
+}

@@ -36,6 +36,5 @@ export const IsEmailLocalized = ({
       },
     ),
   ].filter((v): v is PropertyDecorator => v !== undefined);
-
   return applyDecorators(...decorators);
 };

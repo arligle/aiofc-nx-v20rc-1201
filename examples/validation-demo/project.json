@@ -1,0 +1,26 @@
+{
+  "name": "validation-demo",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "examples/validation-demo/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "validation-demo:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "validation-demo:build:development"
+        },
+        "production": {
+          "buildTarget": "validation-demo:build:production"
+        }
+      }
+    }
+  }
+}
