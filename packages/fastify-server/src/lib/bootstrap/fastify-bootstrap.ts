@@ -36,7 +36,7 @@ export async function fastifyBootstrap(module: any) {
   // 从依赖注入容器中获取了一个 HttpAdapterHost 实例，确保在需要时能够访问和操作底层的 HTTP 服务器实例。
   const httpAdapterHost = app.get(HttpAdapterHost);
 
-  const server = await initialize(
+  const fastifyHttpServer = await initialize(
     app,
     config,
     logger,
@@ -44,10 +44,13 @@ export async function fastifyBootstrap(module: any) {
     httpAdapterHost
   );
 
-  await server.listen(config.port || 3000, '0.0.0.0');
-  logger.log(
-    `🚀 Application is running on: http://localhost:${config.port}/${config.prefix}`
-  );
+  await fastifyHttpServer.listen(
+    config.port || 3000, '0.0.0.0',
+    () => {
+    logger.log(
+      `🚀 Application is running on: http://localhost:${config.port}/${config.prefix}`
+    );
+  });
 
   // return server;
 }

@@ -14,12 +14,18 @@ importers:
       '@aiofc/exceptions':
         specifier: workspace:*
         version: link:packages/exceptions
+      '@aiofc/fastify-server':
+        specifier: workspace:*
+        version: link:packages/fastify-server
       '@aiofc/i18n':
         specifier: workspace:*
         version: link:packages/i18n
       '@aiofc/logger':
         specifier: workspace:*
         version: link:packages/logger
+      '@aiofc/utils':
+        specifier: workspace:*
+        version: link:packages/utils
       '@aiofc/validation':
         specifier: workspace:*
         version: link:packages/validation
