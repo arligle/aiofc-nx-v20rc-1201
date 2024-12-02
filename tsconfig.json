@@ -7,6 +7,7 @@
     { "path": "./apps/previews" },
     { "path": "./packages/i18n" },
     { "path": "./packages/logger" },
-    { "path": "./packages/exceptions" }
+    { "path": "./packages/exceptions" },
+    { "path": "./packages/validation" }
   ]
 }
