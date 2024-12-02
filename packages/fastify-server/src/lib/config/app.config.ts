@@ -1,7 +1,6 @@
 import { Allow, IsInt, IsString, Max, Min } from 'class-validator';
 import { CorsConfig } from './cors.config';
 import { ValidateNestedProperty } from '@aiofc/config';
-// import { ValidateNestedProperty } from '@aiofc/config';
 // import { ValidateNestedProperty } from '@aiofc/validation';
 
 export class AppConfig {
