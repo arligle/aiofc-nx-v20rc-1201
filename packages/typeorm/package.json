@@ -1,0 +1,18 @@
+{
+  "name": "@aiofc/typeorm",
+  "version": "0.0.1",
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "typeorm": "0.3.20",
+    "class-transformer": "^0.5.1",
+    "@nestjs/swagger": "^7.4.2",
+    "@aiofc/persistence-base": "workspace:*",
+    "@nestjs/common": "^10.4.8",
+    "@aiofc/common-types": "workspace:*",
+    "nestjs-paginate": "^9.3.1",
+    "@aiofc/exceptions": "workspace:*"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts"
+}
