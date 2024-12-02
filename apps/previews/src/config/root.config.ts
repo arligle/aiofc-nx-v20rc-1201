@@ -1,7 +1,6 @@
 // import { LoggerConfig } from "@aionx/logger";
 import { ValidateNestedProperty } from '@aiofc/config';
-import { AppConfig } from './app.config';
-// import { AppConfig } from '@aiofc/fastify-server';
+import { AppConfig } from '@aiofc/fastify-server';
 import { LoggerConfig } from '@aiofc/logger';
 import { I18Config } from '@aiofc/i18n';
 
