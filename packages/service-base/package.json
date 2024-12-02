@@ -1,0 +1,17 @@
+{
+  "name": "@aiofc/service-base",
+  "version": "0.0.1",
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "nestjs-paginate": "^9.3.1",
+    "class-transformer": "^0.5.1",
+    "@aiofc/common-types": "workspace:*",
+    "@aiofc/validation": "workspace:*",
+    "@aiofc/exceptions": "workspace:*",
+    "typeorm-transactional": "^0.5.0",
+    "@aiofc/persistence-base": "workspace:*"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts"
+}
