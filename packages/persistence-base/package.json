@@ -2,10 +2,10 @@
   "name": "@aiofc/persistence-base",
   "version": "0.0.1",
   "dependencies": {
-    "tslib": "^2.3.0",
-    "nestjs-paginate": "^9.3.1",
     "@aiofc/common-types": "workspace:*",
-    "nestjs-cls": "3.5.1"
+    "nestjs-cls": "3.5.1",
+    "nestjs-paginate": "^9.3.1",
+    "tslib": "^2.3.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",

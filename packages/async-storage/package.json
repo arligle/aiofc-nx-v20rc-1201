@@ -2,9 +2,9 @@
   "name": "@aiofc/async-storage",
   "version": "0.0.1",
   "dependencies": {
-    "tslib": "^2.3.0",
-    "@nestjs/common": "^10.0.2"
-
+    "@nestjs/common": "^10.4.8",
+    "nestjs-cls": "3.5.1",
+    "tslib": "^2.3.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",
