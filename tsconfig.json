@@ -2,5 +2,12 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": []
+  "references": [
+    { "path": "./packages/config" },
+    { "path": "./apps/previews" },
+    { "path": "./packages/i18n" },
+    { "path": "./packages/logger" },
+    { "path": "./packages/exceptions" },
+    { "path": "./packages/validation" }
+  ]
 }

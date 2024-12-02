@@ -3,11 +3,14 @@
   "files": [],
   "include": [],
   "references": [
-    {
-      "path": "./tsconfig.app.json"
-    }
+    { "path": "../../packages/logger" },
+    { "path": "../../packages/config" },
+    { "path": "../../packages/i18n" },
+    { "path": "./tsconfig.app.json" }
   ],
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
     "esModuleInterop": true
   }
 }
