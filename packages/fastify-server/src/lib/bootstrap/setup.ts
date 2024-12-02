@@ -56,21 +56,21 @@ function applyExpressCompatibility(fastifyInstance: FastifyInstance) {
       }
     );
 }
-// TODO: 设置全局过滤器
+// TODO: 设置全局异常过滤器
 export function setupGlobalFilters(
   app: INestApplication,
   httpAdapterHost: HttpAdapterHost
 ) {
   app.useGlobalFilters(
+    new I18nValidationExceptionFilter({
+      responseBodyFormatter, // 格式化响应体
+      detailedErrors: true, // 是否在响应中包含详细的错误信息,生产环境中应该设置为false
+    }),
     new AnyExceptionFilter(httpAdapterHost as any),
     new OverrideDefaultNotFoundFilter(httpAdapterHost as any),
     new OverrideDefaultForbiddenExceptionFilter(httpAdapterHost as any),
-    // todo generalize
     new HttpExceptionFilter(httpAdapterHost as any),
-    new I18nValidationExceptionFilter({
-      responseBodyFormatter,
-      detailedErrors: true,
-    })
+
     // 加入更多的Filter
     // new PostgresDbQueryFailedErrorFilter(httpAdapterHost as any),
   );

@@ -2,6 +2,7 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
+  HttpStatus,
   Logger,
   ServiceUnavailableException,
 } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { I18nContext } from '@aiofc/i18n';
 import { ErrorResponse } from '../vo/error-response.dto';
 import { I18nTranslations } from '../generated/i18n.generated';
 
+
 @Catch()
 export class AnyExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(AnyExceptionFilter.name);
@@ -17,8 +19,7 @@ export class AnyExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
-    // In certain situations `httpAdapter` might not be available in the
-    // constructor method, thus we should resolve it here.
+    // 在某些情况下，“httpAdapter”可能在构造函数方法，因此我们应该在这里解决它。
     const { httpAdapter } = this.httpAdapterHost;
 
     const ctx = host.switchToHttp();
@@ -31,7 +32,7 @@ export class AnyExceptionFilter implements ExceptionFilter {
     }
 
     const i18n = I18nContext.current<I18nTranslations>(host);
-
+    // 根据国际化上下文生成本地化的错误消息
     const response = {
       // todo implement link to the docs, get from config
       type: 'todo implement link to the docs, get from config',
@@ -41,8 +42,8 @@ export class AnyExceptionFilter implements ExceptionFilter {
       detail:
         i18n?.translate('exception.INTERNAL_ERROR.GENERAL_DETAIL').toString() ??
         /* istanbul ignore next */
-        'Internal Server Error',
-      status: 500,
+        'Internal Server Error 500',
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
       instance: ctx.getRequest().id,
     } satisfies ErrorResponse;
 

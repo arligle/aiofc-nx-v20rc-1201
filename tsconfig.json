@@ -10,6 +10,13 @@
     { "path": "./packages/exceptions" },
     { "path": "./packages/validation" },
     { "path": "./packages/utils" },
-    { "path": "./packages/fastify-server" }
+    { "path": "./packages/fastify-server" },
+    { "path": "./packages/async-storage" },
+    { "path": "./packages/common-types" },
+    { "path": "./packages/persistence-base" },
+    { "path": "./packages/typeorm" },
+    { "path": "./packages/service-base" },
+    { "path": "./packages/auth" },
+    { "path": "./packages/nestjs-typeorm" }
   ]
 }
