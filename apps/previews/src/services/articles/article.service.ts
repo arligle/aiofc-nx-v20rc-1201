@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { BaseEntityService } from '@aiofc/service-base';
 import { Article } from '../../database/entities';
-import { ClsService, ClsStore } from 'nestjs-cls';
 import { ArticleRepository } from '../../repositories/articles/article.repository';
+import { ClsService, ClsStore } from '@aiofc/nestjs-cls';
 
 @Injectable()
 export class ArticleService extends BaseEntityService<
