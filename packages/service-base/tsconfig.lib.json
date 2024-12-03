@@ -12,6 +12,7 @@
   },
   "include": ["src/**/*.ts"],
   "references": [
+    { "path": "../nestjs-cls/tsconfig.lib.json" },
     { "path": "../persistence-base/tsconfig.lib.json" },
     { "path": "../validation/tsconfig.lib.json" },
     { "path": "../i18n/tsconfig.lib.json" },

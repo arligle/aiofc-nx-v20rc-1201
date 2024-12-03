@@ -1,9 +1,9 @@
-import { ClsService, ClsStore } from 'nestjs-cls';
 import { IncomingMessage, ServerResponse } from 'node:http';
 
 import { LoggerConfig } from './config/logger';
 import { DynamicModule } from '@nestjs/common';
 import { LoggerModule } from './core/LoggerModule';
+import { ClsService, ClsStore } from '@aiofc/nestjs-cls';
 
 export function loggerModuleForRootAsync<ClsType extends ClsStore>(
   customProps: (

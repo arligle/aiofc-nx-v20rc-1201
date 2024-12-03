@@ -1,7 +1,6 @@
 import { ExecutionContext, Injectable, Logger, Optional } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { ClsService } from 'nestjs-cls';
 import { ExtractJwt } from 'passport-jwt';
 import { firstValueFrom, Observable } from 'rxjs';
 import { SKIP_AUTH } from '../vo/constants';
@@ -10,6 +9,7 @@ import { UserClsStore } from '../vo/user-cls-store';
 import { GeneralUnauthorizedException } from '@aiofc/exceptions';
 import { IAccessTokenPayload } from '../vo/payload';
 import { AbstractTenantResolutionService } from '../multi-tenancy/abstract-tenant-resolution.service';
+import { ClsService } from '@aiofc/nestjs-cls';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

@@ -15,6 +15,7 @@
     { "path": "../../packages/common-types/tsconfig.lib.json" },
     { "path": "../../packages/persistence-base/tsconfig.lib.json" },
     { "path": "../../packages/auth/tsconfig.lib.json" },
+    { "path": "../../packages/nestjs-cls/tsconfig.lib.json" },
     { "path": "../../packages/exceptions/tsconfig.lib.json" },
     { "path": "../../packages/validation/tsconfig.lib.json" },
     { "path": "../../packages/nestjs-typeorm/tsconfig.lib.json" },

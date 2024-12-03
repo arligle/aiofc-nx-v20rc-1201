@@ -14,9 +14,9 @@ import {
   IAccessTokenPayloadWithTenantsInfo,
 } from '../vo/payload';
 import { UserClsStore } from '../vo/user-cls-store';
-import { ClsService } from 'nestjs-cls';
 import { RoleCheckMode } from '../decorators/role.decorator';
 import { AbstractRoleAccessCheckService } from '../services/role-access-check.service';
+import { ClsService } from '@aiofc/nestjs-cls';
 
 @Injectable()
 export class AccessGuard implements CanActivate {

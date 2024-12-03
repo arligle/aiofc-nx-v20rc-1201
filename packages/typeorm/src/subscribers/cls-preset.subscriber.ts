@@ -1,6 +1,6 @@
+import { ClsService } from '@aiofc/nestjs-cls';
 import { defaultClsMetadataStore, PresetType, TenantClsStore } from '@aiofc/persistence-base';
 import { Injectable } from '@nestjs/common';
-import { ClsService } from 'nestjs-cls';
 import {
   DataSource,
   EntitySubscriberInterface,

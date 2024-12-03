@@ -1,7 +1,7 @@
 {
-  "name": "async-storage",
+  "name": "nestjs-cls",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/async-storage/src",
+  "sourceRoot": "packages/nestjs-cls/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -17,11 +17,11 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/async-storage",
-        "tsConfig": "packages/async-storage/tsconfig.lib.json",
-        "packageJson": "packages/async-storage/package.json",
-        "main": "packages/async-storage/src/index.ts",
-        "assets": ["packages/async-storage/*.md"]
+        "outputPath": "dist/packages/nestjs-cls",
+        "tsConfig": "packages/nestjs-cls/tsconfig.lib.json",
+        "packageJson": "packages/nestjs-cls/package.json",
+        "main": "packages/nestjs-cls/src/index.ts",
+        "assets": ["packages/nestjs-cls/*.md"]
       }
     },
     "nx-release-publish": {

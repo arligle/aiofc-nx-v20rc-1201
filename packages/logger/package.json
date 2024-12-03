@@ -9,7 +9,7 @@
     "pino-http": "^10.3.0",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0",
-    "nestjs-cls": "3.5.1"
+    "@aiofc/nestjs-cls": "workspace:*"
   },
   "type": "commonjs",
   "main": "./src/index.js",

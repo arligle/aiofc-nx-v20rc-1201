@@ -7,7 +7,6 @@ import rootConfig from '../config/root.config';
 import { AcceptLanguageResolver, HeaderResolver, I18nJsonLoader, I18nModule, QueryResolver } from '@aiofc/i18n';
 import { join } from 'path';
 import { Logger, loggerModuleForRootAsync } from '@aiofc/logger';
-import { ClsModule } from 'nestjs-cls';
 import { FastifyRequest } from 'fastify';
 import { TypeOrmModule, typeOrmModuleConfig } from '@aiofc/nestjs-typeorm';
 import * as Entities from '../database/entities';
@@ -17,17 +16,19 @@ import { ArticleRepository } from '../repositories/articles/article.repository';
 import { TenantsController } from '../controllers/tenants/tenants.controller';
 import { TenantService } from '../services/tenants/tenant.service';
 import { TenantsRepository } from '../repositories/tenants/tenants.repository';
-
+import { ClsModule } from '@aiofc/nestjs-cls';
 
 @Module({
   imports: [
      ClsModule.forRoot({
-      global: true,
-      middleware: {
-        mount: true,
-        generateId: true,
+      global: true, // 将在整个应用程序中全局可用，而不需要在每个模块中单独导入
+      middleware: {  // 对于 HTTP 传输，上下文最好可以在 ClsMiddleware 中设置
+        mount: true, // 中间件将被挂载到应用程序中，以便在每个请求的生命周期内启用 CLS
+        generateId: true, // 中间件将为每个请求生成一个唯一的 ID
+        // 指定cls设定上下文时执行的回调函数
         setup: (cls, req: FastifyRequest) => {
           // put some additional default info in the CLS
+          // 把每一个请求的id放到cls中，用以追踪请求的生命周期
           cls.set('requestId', req.id?.toString());
         },
         idGenerator: (req: FastifyRequest) => req.id.toString(),

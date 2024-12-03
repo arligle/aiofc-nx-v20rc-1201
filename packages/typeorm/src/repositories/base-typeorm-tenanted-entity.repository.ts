@@ -1,10 +1,10 @@
-import { ClsService } from 'nestjs-cls';
 import { DataSource, FindOptionsWhere } from 'typeorm';
 import { GeneralInternalServerException } from '@aiofc/exceptions';
 import { BaseTypeormTrackedEntityRepository } from './base-typeorm-tracked-entity.repository';
 import { ObjectType } from 'typeorm/common/ObjectType';
 import { AbstractBaseTenantEntity } from '../entity/abstract-base-tenant.entity';
 import { TenantClsStore } from '@aiofc/persistence-base';
+import { ClsService } from '@aiofc/nestjs-cls';
 
 export abstract class BaseTypeormTenantedEntityRepository<
   ENTITY extends AbstractBaseTenantEntity,
