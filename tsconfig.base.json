@@ -18,7 +18,6 @@
     "sourceMap": true,
     "skipDefaultLibCheck": true,
     "paths": {
-      "@aiofc/async-storage": ["packages/async-storage/src/index.ts"],
       "@aiofc/auth": ["packages/auth/src/index.ts"],
       "@aiofc/common-types": ["packages/common-types/src/index.ts"],
       "@aiofc/config": ["packages/config/src/index.ts"],
@@ -28,6 +27,7 @@
       "@aiofc/fastify-server": ["packages/fastify-server/src/index.ts"],
       "@aiofc/i18n": ["packages/i18n/src/index.ts"],
       "@aiofc/logger": ["packages/logger/src/index.ts"],
+      "@aiofc/nestjs-cls": ["packages/nestjs-cls/src/index.ts"],
       "@aiofc/nestjs-typeorm": ["packages/nestjs-typeorm/src/index.ts"],
       "@aiofc/node-postgres": ["packages/node-postgres/src/index.ts"],
       "@aiofc/persistence-base": ["packages/persistence-base/src/index.ts"],

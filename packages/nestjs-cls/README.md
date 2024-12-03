@@ -1,7 +1,7 @@
-# async-storage
+# nestjs-cls
 
 This library was generated with [Nx](https://nx.dev).
 
 ## Building
 
-Run `nx build async-storage` to build the library.
+Run `nx build nestjs-cls` to build the library.

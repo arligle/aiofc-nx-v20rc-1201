@@ -1,5 +1,4 @@
-import type { ClsStore } from 'nestjs-cls';
-
+import type { ClsStore } from '@aiofc/nestjs-cls';
 export interface TenantClsStore extends ClsStore {
   tenantId?: string;
 }
