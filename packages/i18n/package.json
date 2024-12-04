@@ -1,6 +1,7 @@
 {
   "name": "@aiofc/i18n",
   "version": "0.0.1",
+
   "dependencies": {
     "@grpc/grpc-js": "^1.12.2",
     "@nestjs/common": "^10.4.8",

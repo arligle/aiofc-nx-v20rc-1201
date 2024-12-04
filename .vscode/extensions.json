@@ -3,6 +3,9 @@
     "nrwl.angular-console",
     "esbenp.prettier-vscode",
     "firsttris.vscode-jest-runner",
-    "yoavbls.pretty-ts-errors"
+    "yoavbls.pretty-ts-errors",
+    "bierner.markdown-mermaid",
+    "vstirbu.vscode-mermaid-preview",
+    "shd101wyy.markdown-preview-enhanced"
   ]
 }

@@ -11,8 +11,8 @@ export class TenantsRepository extends BaseRepository<Tenant, 'id'> {
   constructor(
     @InjectDataSource()
     readonly ds: DataSource,
-    clsService: ClsService<TenantClsStore>
+    cls: ClsService<TenantClsStore>
   ) {
-    super(Tenant, ds, 'id', clsService);
+    super(Tenant, ds, 'id', cls);
   }
 }

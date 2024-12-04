@@ -50,7 +50,7 @@ export class I18nModule implements OnModuleInit, NestModule {
   constructor(
     private readonly i18n: I18nService,
     @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions,
-    private adapter: HttpAdapterHost,
+    private adapter: HttpAdapterHost
   ) {}
 
   static forRoot(options: I18nOptions): DynamicModule {
@@ -69,7 +69,7 @@ export class I18nModule implements OnModuleInit, NestModule {
     const translationsProvider = {
       provide: I18N_TRANSLATIONS,
       useFactory: async (
-        loaders: I18nLoader<unknown>[],
+        loaders: I18nLoader<unknown>[]
       ): Promise<I18nTranslation> => {
         return processTranslations(loaders);
       },
@@ -160,7 +160,7 @@ export class I18nModule implements OnModuleInit, NestModule {
   }
 
   private static createAsyncOptionsProvider(
-    options: I18nAsyncOptions,
+    options: I18nAsyncOptions
   ): Provider {
     if (options.useFactory) {
       const factory = options.useFactory;
@@ -181,14 +181,14 @@ export class I18nModule implements OnModuleInit, NestModule {
         provide: I18N_OPTIONS,
         useFactory: async (optionsFactory: I18nOptionsFactory) =>
           this.sanitizeI18nOptions(
-            (await optionsFactory.createI18nOptions()) as any,
+            (await optionsFactory.createI18nOptions()) as any
           ),
         inject: [existingOrClass],
       };
     }
 
     throw new Error(
-      'Invalid I18n async options, useClass or useExisting or useFactory must be provided',
+      'Invalid I18n async options, useClass or useExisting or useFactory must be provided'
     );
   }
 
@@ -196,7 +196,7 @@ export class I18nModule implements OnModuleInit, NestModule {
     return {
       provide: I18N_TRANSLATIONS,
       useFactory: async (
-        loaders: I18nLoader<unknown>[],
+        loaders: I18nLoader<unknown>[]
       ): Promise<I18nTranslation> => {
         return processTranslations(loaders);
       },
@@ -213,9 +213,13 @@ export class I18nModule implements OnModuleInit, NestModule {
       inject: [I18N_LOADERS],
     };
   }
-
+  /**
+ * @description 用于清理和合并国际化（i18n）配置选项
+    方法确保了国际化配置选项的完整性和一致性。无论传入的选项是同步的还是异步的，这个方法都能正确处理，
+    并返回一个包含默认选项和传入选项的合并对象。这对于确保国际化模块的配置始终有效和一致非常重要
+ */
   private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(
-    options: T,
+    options: T
   ) {
     options = { ...defaultOptions, ...options };
     return options;
@@ -224,7 +228,7 @@ export class I18nModule implements OnModuleInit, NestModule {
   private static createResolverProviders(resolvers?: I18nOptionResolver[]) {
     if (!resolvers || resolvers.length === 0) {
       logger.error(
-        `No resolvers provided! @aiofc/i18n won't work properly, please follow the quick-start guide: https://docs.softkit.dev/libraries/i18n/quick-start`,
+        `No resolvers provided! @aiofc/i18n won't work properly, please follow the quick-start guide: https://docs.softkit.dev/libraries/i18n/quick-start`
       );
     }
     return (resolvers || [])
@@ -233,7 +237,7 @@ export class I18nModule implements OnModuleInit, NestModule {
         if (isResolverWithOptions(r)) {
           const { use: resolver, options, ...rest } = r as any;
           const optionsToken = getI18nResolverOptionsToken(
-            resolver as unknown as () => void,
+            resolver as unknown as () => void
           );
           providers.push({
             provide: resolver,
@@ -248,7 +252,7 @@ export class I18nModule implements OnModuleInit, NestModule {
           });
         } else {
           const optionsToken = getI18nResolverOptionsToken(
-            r as unknown as () => void,
+            r as unknown as () => void
           );
           providers.push(
             {
@@ -260,7 +264,7 @@ export class I18nModule implements OnModuleInit, NestModule {
               provide: optionsToken,
               // eslint-disable-next-line @typescript-eslint/no-empty-function
               useFactory: () => {},
-            },
+            }
           );
         }
 

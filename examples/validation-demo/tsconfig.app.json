@@ -7,7 +7,7 @@
     "emitDecoratorMetadata": true,
     "target": "es2021"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/app/vo/sample.dto.ts.copy"],
   "references": [
     { "path": "../../packages/exceptions/tsconfig.lib.json" },
     { "path": "../../packages/i18n/tsconfig.lib.json" },
