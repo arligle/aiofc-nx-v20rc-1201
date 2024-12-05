@@ -1,5 +1,5 @@
 import { fastifySwaggerBootstrap } from "@aiofc/fastify-server";
-import { AppModule } from "./app/app.module";
+import { AppModule } from "./app.module";
 // import { getTransactionalContext } from "typeorm-transactional/dist/common";
 // import { initializeTransactionalContext } from 'typeorm-transactional';
 

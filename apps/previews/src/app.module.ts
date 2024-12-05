@@ -1,28 +1,39 @@
 import { Module } from '@nestjs/common';
-
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { typedConfigModuleForRoot } from '@aiofc/config';
-import rootConfig from '../config/root.config';
-import { AcceptLanguageResolver, HeaderResolver, I18nJsonLoader, I18nModule, QueryResolver } from '@aiofc/i18n';
+import rootConfig from './config/root.config';
+import {
+  AcceptLanguageResolver,
+  HeaderResolver,
+  I18nJsonLoader,
+  I18nModule,
+  QueryResolver,
+} from '@aiofc/i18n';
 import { join } from 'path';
 import { Logger, loggerModuleForRootAsync } from '@aiofc/logger';
 import { FastifyRequest } from 'fastify';
 import { TypeOrmModule, typeOrmModuleConfig } from '@aiofc/nestjs-typeorm';
-import * as Entities from '../database/entities';
-import { ArticleController } from '../controllers/articles/article.controller';
-import { ArticleService } from '../services/articles/article.service';
-import { ArticleRepository } from '../repositories/articles/article.repository';
-import { TenantsController } from '../controllers/tenants/tenants.controller';
-import { TenantService } from '../services/tenants/tenant.service';
-import { TenantsRepository } from '../repositories/tenants/tenants.repository';
+import * as Entities from './database/entities';
+import * as Controllers from './controllers';
+import * as Repositories from './repositories';
+import * as Services from './services';
 import { ClsModule } from '@aiofc/nestjs-cls';
+import { AbstractAccessCheckService, AbstractTenantResolutionService, AbstractTokenBuilderService, AccessGuard, HeaderTenantResolutionService, JwtAuthGuard, JwtStrategy, TokenService } from '@aiofc/auth';
+import AbstractAuthUserService from './services/auth/abstract-auth-user.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ClsPresetSubscriber, OptimisticLockingSubscriber } from '@aiofc/typeorm';
+import AuthUserService from './services/users/auth-user.service';
+import { MultiTenantTokenBuilderService } from './services/auth/token/multi-tenant-token-builder.service';
+import { AccessCheckService } from './services/roles/access-check.service';
+import { AbstractSignupService } from './services/auth/signup/signup.service.interface';
+import { APP_GUARD } from '@nestjs/core';
+import { TenantSignupService } from './services/auth/signup/tenant-signup.service';
 
 @Module({
   imports: [
-     ClsModule.forRoot({
+    ClsModule.forRoot({
       global: true, // 将在整个应用程序中全局可用，而不需要在每个模块中单独导入
-      middleware: {  // 对于 HTTP 传输，上下文最好可以在 ClsMiddleware 中设置
+      middleware: {
+        // 对于 HTTP 传输，上下文最好可以在 ClsMiddleware 中设置
         mount: true, // 中间件将被挂载到应用程序中，以便在每个请求的生命周期内启用 CLS
         generateId: true, // 中间件将为每个请求生成一个唯一的 ID
         // 指定cls设定上下文时执行的回调函数
@@ -50,7 +61,7 @@ import { ClsModule } from '@aiofc/nestjs-cls';
         new HeaderResolver(['x-lang']),
       ],
     }),
-        /*
+    /*
       这两个函数通常不会有冲突，因为它们的作用是不同的，并且在不同的层面上进行配置。
       typeOrmModuleForRootAsync():
       这个函数用于初始化 TypeORM 模块，并配置与数据库的连接。
@@ -67,24 +78,52 @@ import { ClsModule } from '@aiofc/nestjs-cls';
       TypeOrmModule.forFeature() 负责在特定模块中注册实体，以及操作这些实体。
       因此，它们可以一起使用而不会产生冲突,相反应该根据需要配合一起使用。
     */
-   typeOrmModuleConfig(), // 全局
+    typeOrmModuleConfig(), // 全局
     // 是否需要讲这些实体与数据库同步需要再配置文件.env.yaml中配置：synchronize: true
     TypeOrmModule.forFeature(Object.values(Entities)), // 局部
+    JwtModule,
   ],
-  controllers: [
-    AppController,
-    ArticleController,
-    TenantsController
-  ],
+
+  controllers: Object.values(Controllers),
   providers: [
-    AppService,
+    ...Object.values(Services),
+    ...Object.values(Repositories),
+    OptimisticLockingSubscriber,
+    ClsPresetSubscriber,
     Logger,
-    ArticleService,
-    ArticleRepository,
-    TenantService,
-    TenantsRepository
+    JwtStrategy,
+    JwtService,
+    TokenService,
+     {
+      provide: AbstractAuthUserService,
+      useClass: AuthUserService,
+    },
+    {
+      provide: AbstractTokenBuilderService,
+      useClass: MultiTenantTokenBuilderService,
+    },
+    {
+      provide: AbstractTenantResolutionService,
+      useClass: HeaderTenantResolutionService,
+    },
+    {
+      provide: AbstractAccessCheckService,
+      useClass: AccessCheckService,
+    },
+    {
+      provide: AbstractSignupService,
+      useClass: TenantSignupService,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AccessGuard,
+    },
 
   ],
-  // exports: [AppService],
+  // exports: [AbstractAuthUserService],
 })
 export class AppModule {}
