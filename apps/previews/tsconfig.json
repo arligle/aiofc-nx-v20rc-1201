@@ -5,6 +5,7 @@
   "references": [
     { "path": "../../packages/service-base" },
     { "path": "../../packages/typeorm" },
+    { "path": "../../packages/utils" },
     { "path": "../../packages/fastify-server" },
     { "path": "../../packages/common-types" },
     { "path": "../../packages/persistence-base" },
