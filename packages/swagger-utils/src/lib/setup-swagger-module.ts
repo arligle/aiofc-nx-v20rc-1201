@@ -1,4 +1,6 @@
-import { INestApplication } from '@nestjs/common';
+import {
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { SwaggerConfig } from './config/swagger';
@@ -8,7 +10,7 @@ import { SwaggerConfig } from './config/swagger';
  * */
 export function setupSwagger(
   c: SwaggerConfig,
-  app: INestApplication,
+  app: NestFastifyApplication,
   appPrefix?: string,
 ) {
   if (!c.enabled) {

@@ -11,6 +11,7 @@
   "references": [
     { "path": "../../packages/service-base/tsconfig.lib.json" },
     { "path": "../../packages/typeorm/tsconfig.lib.json" },
+    { "path": "../../packages/swagger-utils/tsconfig.lib.json" },
     { "path": "../../packages/fastify-server/tsconfig.lib.json" },
     { "path": "../../packages/common-types/tsconfig.lib.json" },
     { "path": "../../packages/persistence-base/tsconfig.lib.json" },

@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { useContainer } from 'class-validator';
+// import { useContainer } from 'class-validator';
 import { buildFastifyAdapter } from './setup';
-import { NestFastifyApplication } from '@nestjs/platform-fastify';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppConfig } from '../config/app.config';
 import { Logger, LoggerErrorInterceptor } from '@aiofc/logger';
 import { initializeTransactionalContext } from 'typeorm-transactional';
@@ -16,20 +16,24 @@ import {
 } from '@aiofc/exceptions';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from '@aiofc/i18n';
 import { DEFAULT_VALIDATION_OPTIONS } from '@aiofc/validation';
-
+import { callOrUndefinedIfException } from '../utils/functions';
+import { setupSwagger, SwaggerConfig } from '@aiofc/swagger-utils';
 export async function fastifySwaggerBootstrap(module: any) {
 
   initializeTransactionalContext();
-
-  const app = await NestFactory.create<NestFastifyApplication>(
+const app = await NestFactory.create<NestFastifyApplication>(
     module,
-    buildFastifyAdapter(),
-    // 设置为 true 时，日志消息将被暂时存储（缓冲）而不是立即输出。
-    {
-      bufferLogs: true,
-    }
+    new FastifyAdapter(),
   );
-  useContainer(app.select(module), { fallbackOnErrors: true });
+  // const app = await NestFactory.create<NestFastifyApplication>(
+  //   module,
+  //   buildFastifyAdapter(),
+  //   // 设置为 true 时，日志消息将被暂时存储（缓冲）而不是立即输出。
+  //   {
+  //     bufferLogs: true,
+  //   }
+  // );
+  // useContainer(app.select(module), { fallbackOnErrors: true });
 
   const config = app.get(AppConfig);
   const logger = app.get(Logger);
@@ -41,14 +45,31 @@ export async function fastifySwaggerBootstrap(module: any) {
   app.useLogger(logger);
   app.flushLogs(); // 刷新日志：将内存中的日志数据写入到持久存储（如文件或数据库）中
   app.setGlobalPrefix(config.prefix || 'api');
-
+  const swaggerConfig = callOrUndefinedIfException(() =>
+    app.get(SwaggerConfig),
+  );
   // 启用跨域请求
   app.enableCors(config.cors);
   // 用于启用 API 版本控制。这里使用了 URI 版本控制策略。
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  // TODO: 启用 Swagger 文档
+  if (swaggerConfig instanceof SwaggerConfig) {
+    const swaggerSetup = setupSwagger(swaggerConfig, app, config.prefix);
+    const swaggerPath = `${config.prefix}${swaggerConfig.swaggerPath}`;
 
+    if (swaggerSetup) {
+      logger.log(`Swagger is listening on ${swaggerPath}`);
+    } else {
+      logger.log(`Swagger is disabled by config, skipping...`);
+    }
+  } else {
+    logger.debug(
+      `SwaggerConfig instance is not provided so swagger turned off by default, skipping... Details: %o`,
+      swaggerConfig,
+    );
+  }
 
   // TODO: 全局的类验证管道，用于处理请求数据的验证,支持国际化多语言
   app.useGlobalPipes(new I18nValidationPipe(DEFAULT_VALIDATION_OPTIONS));
@@ -73,7 +94,11 @@ export async function fastifySwaggerBootstrap(module: any) {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   // 用于捕获和记录应用程序中的错误日志
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
-
+  await app.listen(config.port || 3000, '0.0.0.0', () => {
+    logger.log(
+      `🚀 Application is running on: http://localhost:${config.port}/${config.prefix}`
+    );
+  });
 
   // return server;
 }

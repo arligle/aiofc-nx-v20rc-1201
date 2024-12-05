@@ -20,6 +20,7 @@ export class BadRequestData {
   @ApiProperty({
     type: 'object',
     description: 'constrains that caused the error',
+    additionalProperties: true,
   })
   constraints!: Record<string, string>;
 }
