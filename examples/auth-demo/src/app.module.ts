@@ -8,6 +8,16 @@ import {
   I18nModule,
   QueryResolver,
 } from '@aiofc/i18n';
+import {
+  TokenAccessCheckService,
+  TokenService,
+  JwtStrategy,
+  AbstractAccessCheckService,
+  AbstractTenantResolutionService,
+  AuthConfig,
+  JwtAuthGuard,
+  AccessGuard
+} from '@aiofc/auth';
 import { join } from 'path';
 import { Logger, loggerModuleForRootAsync } from '@aiofc/logger';
 import { FastifyRequest } from 'fastify';
@@ -17,6 +27,14 @@ import * as Controllers from './controllers';
 import * as Repositories from './repositories';
 import * as Services from './services';
 import { ClsModule } from '@aiofc/nestjs-cls';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthConfigMock } from './config/auth-config.mock';
+import { NoOpTenantResolutionService } from './utils/no-op-tenant-resolution-service';
+import { SkipAuthController } from './controllers/skip-auth.controller';
+import { AuthController } from './controllers/auth.controller';
+import { RefreshTokenAuthController } from './controllers/refresh-token-auth.controller';
+import { RolesController } from './controllers/roles.controller';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -57,11 +75,40 @@ import { ClsModule } from '@aiofc/nestjs-cls';
     TypeOrmModule.forFeature(Object.values(Entities)), // 局部
   ],
 
-  controllers: Object.values(Controllers),
+  controllers: [
+    ...Object.values(Controllers),
+    SkipAuthController,
+    AuthController,
+    RefreshTokenAuthController,
+    RolesController,
+  ],
   providers: [
     ...Object.values(Services),
     ...Object.values(Repositories),
     Logger,
+    TokenService,
+    JwtService,
+    JwtStrategy,
+    {
+      useClass: TokenAccessCheckService,
+      provide: AbstractAccessCheckService,
+    },
+    {
+      useClass: NoOpTenantResolutionService,
+      provide: AbstractTenantResolutionService,
+    },
+    {
+      useClass: AuthConfigMock,
+      provide: AuthConfig,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AccessGuard,
+    },
   ],
   // exports: [AbstractAuthUserService],
 })
