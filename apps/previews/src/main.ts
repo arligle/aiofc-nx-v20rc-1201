@@ -1,5 +1,6 @@
 import { fastifyBootstrap } from "@aiofc/fastify-server";
 import { AppModule } from "./app/app.module";
+// import { getTransactionalContext } from "typeorm-transactional/dist/common";
 import { initializeTransactionalContext } from 'typeorm-transactional';
 
 
@@ -8,7 +9,13 @@ import { initializeTransactionalContext } from 'typeorm-transactional';
 调用 initializeTransactionalContext 必须在初始化任何应用程序上下文之前发生！
 https://www.npmjs.com/package/typeorm-transactional#usage
 */
+//  transition to use AsyncCls instead of ClsHook
+// getTransactionalContext();
 initializeTransactionalContext();
+  // this is needed for tests to prevent multiple initializations
+  // if (!transactionalContext) {
+  //   initializeTransactionalContext();
+  // }
 fastifyBootstrap(AppModule);
 // TODO: 启动方法1
 // import { NestFactory } from '@nestjs/core';

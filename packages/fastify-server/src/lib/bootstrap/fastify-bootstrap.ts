@@ -1,7 +1,7 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
 import { FastifyInstance } from 'fastify';
-import { createFastifyInstance, initialize } from './setup';
+import { buildFastifyAdapter, initialize } from './setup';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppConfig } from '../config/app.config';
 import { Logger } from '@aiofc/logger';
@@ -19,7 +19,7 @@ export async function fastifyBootstrap(module: any) {
 
   const app = await NestFactory.create<NestFastifyApplication>(
     module,
-    createFastifyInstance(),
+    buildFastifyAdapter(),
     // 设置为 true 时，日志消息将被暂时存储（缓冲）而不是立即输出。
     {
       bufferLogs: true,
@@ -44,9 +44,7 @@ export async function fastifyBootstrap(module: any) {
     httpAdapterHost
   );
 
-  await fastifyHttpServer.listen(
-    config.port || 3000, '0.0.0.0',
-    () => {
+  await fastifyHttpServer.listen(config.port || 3000, '0.0.0.0', () => {
     logger.log(
       `🚀 Application is running on: http://localhost:${config.port}/${config.prefix}`
     );

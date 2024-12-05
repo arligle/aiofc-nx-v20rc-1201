@@ -3,7 +3,7 @@ import { BaseEntityService } from '@aiofc/service-base';
 import { Article } from '../../database/entities';
 import { ArticleRepository } from '../../repositories/articles/article.repository';
 import { ClsService, ClsStore } from '@aiofc/nestjs-cls';
-import { faker } from '@faker-js/faker/.';
+import { faker } from '@faker-js/faker';
 
 @Injectable()
 export class ArticleService extends BaseEntityService<

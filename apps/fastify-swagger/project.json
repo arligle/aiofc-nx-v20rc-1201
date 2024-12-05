@@ -1,0 +1,26 @@
+{
+  "name": "fastify-swagger",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/fastify-swagger/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "fastify-swagger:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "fastify-swagger:build:development"
+        },
+        "production": {
+          "buildTarget": "fastify-swagger:build:production"
+        }
+      }
+    }
+  }
+}
