@@ -1,4 +1,4 @@
-import { IBaseTrackedEntity } from '../entity/base-tracked-entity-interface';
+import { ITrackedBaseEntity } from '../entity/tracked-base-entity-interface';
 import { LimitOptions } from './vo/limit-options.interface';
 /**
  * @description 以接口的形式定义了一个通用的带可追踪属性的存储库形态，
@@ -11,8 +11,8 @@ import { LimitOptions } from './vo/limit-options.interface';
  * @template ID
  * @template FIND_OPTIONS
  */
-export interface ITrackedRepository<
-  ENTITY extends IBaseTrackedEntity,
+export interface ITrackedBaseEntityRepository<
+  ENTITY extends ITrackedBaseEntity,
   ID extends keyof ENTITY,
   FIND_OPTIONS,
 > {

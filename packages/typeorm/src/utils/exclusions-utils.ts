@@ -1,5 +1,7 @@
-import { AbstractBaseTrackedEntity } from "../entity/abstract-base-tracked.entity";
-import { AbstractBaseEntity } from "../entity/abstract-base.entity";
+
+import { TrackedTypeormBaseEntity } from "../entity/tracked-typeorm-base-entity";
+import { TypeormBaseEntity } from "../entity/typeorm-base-entity";
+
 
 export const DEFAULT_ENTITY_EXCLUDE_LIST = [
   'hasId',
@@ -8,7 +10,7 @@ export const DEFAULT_ENTITY_EXCLUDE_LIST = [
   'softRemove',
   'reload',
   'save',
-] as Array<keyof AbstractBaseEntity>;
+] as Array<keyof TypeormBaseEntity>;
 
 export const DEFAULT_CREATE_ENTITY_EXCLUDE_LIST = [
   ...DEFAULT_ENTITY_EXCLUDE_LIST,
@@ -17,7 +19,7 @@ export const DEFAULT_CREATE_ENTITY_EXCLUDE_LIST = [
   'updatedAt',
   'deletedAt',
   'version',
-] as Array<keyof AbstractBaseTrackedEntity>;
+] as Array<keyof TrackedTypeormBaseEntity>;
 
 export const DEFAULT_UPDATE_ENTITY_EXCLUDE_LIST = [
   ...DEFAULT_ENTITY_EXCLUDE_LIST,
@@ -25,4 +27,4 @@ export const DEFAULT_UPDATE_ENTITY_EXCLUDE_LIST = [
   'createdAt',
   'updatedAt',
   'deletedAt',
-] as Array<keyof AbstractBaseEntity | 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;
+] as Array<keyof TypeormBaseEntity | 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>;

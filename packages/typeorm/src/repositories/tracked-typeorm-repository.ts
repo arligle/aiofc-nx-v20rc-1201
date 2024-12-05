@@ -1,24 +1,24 @@
 import { DataSource, FindOptionsWhere, In, IsNull, Not } from 'typeorm';
-import { BaseTypeormEntityRepository } from './base-typeorm-entity.repository';
+import { TypeormRepository } from './typeorm-repository';
 import { ObjectType } from 'typeorm/common/ObjectType';
-import { AbstractBaseTrackedEntity } from '../entity/abstract-base-tracked.entity';
-import { ITrackedRepository, LimitOptions } from '@aiofc/persistence-base';
+import { TrackedTypeormBaseEntity } from '../entity/tracked-typeorm-base-entity';
+import { ITrackedBaseEntityRepository, LimitOptions } from '@aiofc/persistence-base';
 
-export abstract class BaseTypeormTrackedEntityRepository<
-    ENTITY extends AbstractBaseTrackedEntity,
+export abstract class TrackedTypeormRepository<
+    ENTITY extends TrackedTypeormBaseEntity,
     ID extends keyof ENTITY,
     FIELDS_REQUIRED_FOR_UPDATE extends keyof ENTITY = ID, // 字段_必填_用于更新
     AUTO_GENERATED_FIELDS extends keyof ENTITY =
-      | keyof AbstractBaseTrackedEntity
+      | keyof TrackedTypeormBaseEntity
       | ID,
   >
-  extends BaseTypeormEntityRepository<
+  extends TypeormRepository<
     ENTITY,
     ID,
     FIELDS_REQUIRED_FOR_UPDATE,
     AUTO_GENERATED_FIELDS
   >
-  implements ITrackedRepository<ENTITY, ID, FindOptionsWhere<ENTITY>>
+  implements ITrackedBaseEntityRepository<ENTITY, ID, FindOptionsWhere<ENTITY>>
 {
   protected constructor(
     entityTarget: ObjectType<ENTITY>,

@@ -17,7 +17,7 @@ import { IBaseEntity } from '../entity/base-entity-interface';
  * @template FIELDS_REQUIRED_FOR_UPDATE
  * @template AUTO_GENERATED_FIELDS
  */
-export abstract class AbstractRepository<
+export abstract class BaseRepository<
   ENTITY extends IBaseEntity,
   ID extends keyof ENTITY,
   FIND_OPTIONS,

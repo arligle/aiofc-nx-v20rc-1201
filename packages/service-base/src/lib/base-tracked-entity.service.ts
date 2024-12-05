@@ -1,6 +1,9 @@
 
-import { AbstractRepository, IBaseTrackedEntity, ITrackedRepository } from '@aiofc/persistence-base';
-import { BaseEntityService } from './base-entity.service';
+import {
+  BaseRepository,
+  ITrackedBaseEntity,
+  ITrackedBaseEntityRepository } from '@aiofc/persistence-base';
+import { BaseEntityService } from './base-entity-service';
 /**
  * @description 以泛型类的形式继承了基础实体服务类BaseEntityService，
  * 并增加了两个方法用于数据的可追踪，包括：归档、恢复
@@ -13,10 +16,10 @@ import { BaseEntityService } from './base-entity.service';
  * @template AUTO_GENERATED_FIELDS
  */
 export class BaseTrackedEntityService<
-  ENTITY extends IBaseTrackedEntity,
+  ENTITY extends ITrackedBaseEntity,
   ID extends keyof ENTITY,
-  REPOSITORY extends ITrackedRepository<ENTITY, ID, unknown> &
-    AbstractRepository<
+  REPOSITORY extends ITrackedBaseEntityRepository<ENTITY, ID, unknown> &
+    BaseRepository<
       ENTITY,
       ID,
       unknown,
@@ -24,7 +27,7 @@ export class BaseTrackedEntityService<
       AUTO_GENERATED_FIELDS
     >,
   FIELDS_REQUIRED_FOR_UPDATE extends keyof ENTITY = ID,
-  AUTO_GENERATED_FIELDS extends keyof ENTITY = ID | keyof IBaseTrackedEntity,
+  AUTO_GENERATED_FIELDS extends keyof ENTITY = ID | keyof ITrackedBaseEntity,
 > extends BaseEntityService<
   ENTITY,
   ID,

@@ -15,7 +15,7 @@ import { IBaseEntity } from '@aiofc/persistence-base';
  * @template FIELDS_REQUIRED_FOR_UPDATE
  * @template AUTO_GENERATED_FIELDS
  */
-export abstract class AbstractBaseService<
+export abstract class BaseService<
   ENTITY extends IBaseEntity,
   ID extends keyof ENTITY,
   FIELDS_REQUIRED_FOR_UPDATE extends keyof ENTITY = ID,

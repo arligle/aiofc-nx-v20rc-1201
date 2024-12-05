@@ -1,20 +1,20 @@
 import { DataSource, FindOptionsWhere } from 'typeorm';
 import { GeneralInternalServerException } from '@aiofc/exceptions';
-import { BaseTypeormTrackedEntityRepository } from './base-typeorm-tracked-entity.repository';
+import { TrackedTypeormRepository } from './tracked-typeorm-repository';
 import { ObjectType } from 'typeorm/common/ObjectType';
-import { AbstractBaseTenantEntity } from '../entity/abstract-base-tenant.entity';
+import { TenantTrackedTypeormBaseEntity } from '../entity/tenant-tracked-typeorm-base-entity';
 import { TenantClsStore } from '@aiofc/persistence-base';
 import { ClsService } from '@aiofc/nestjs-cls';
 
-export abstract class BaseTypeormTenantedEntityRepository<
-  ENTITY extends AbstractBaseTenantEntity,
+export abstract class TenantTrackedTypeormRepository<
+  ENTITY extends TenantTrackedTypeormBaseEntity,
   ID extends keyof ENTITY,
   FIELDS_REQUIRED_FOR_UPDATE extends keyof ENTITY = ID,
   AUTO_GENERATED_FIELDS extends keyof ENTITY =
-    | keyof AbstractBaseTenantEntity
+    | keyof TenantTrackedTypeormBaseEntity
     | ID
     | 'tenantId',
-> extends BaseTypeormTrackedEntityRepository<
+> extends TrackedTypeormRepository<
   ENTITY,
   ID,
   FIELDS_REQUIRED_FOR_UPDATE,

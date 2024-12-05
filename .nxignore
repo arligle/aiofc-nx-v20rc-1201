@@ -1,5 +1,4 @@
-examples/fastify-server-demo
-examples/typeorm-auth-demo
-packages/engineer
-examples/typeorm-demo
-# apps/previews
+apps/fastify-swagger
+examples/nestjs-cls-demo
+examples/validation-demo
+apps/previews

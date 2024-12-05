@@ -15,11 +15,11 @@ import {
   PaginateQuery,
 } from 'nestjs-paginate';
 import { ObjectType } from 'typeorm/common/ObjectType';
-import { AbstractRepository, LimitOptions } from '@aiofc/persistence-base';
-import { AbstractBaseEntity } from '../entity/abstract-base.entity';
+import { BaseRepository, LimitOptions } from '@aiofc/persistence-base';
+import { TypeormBaseEntity } from '../entity/typeorm-base-entity';
 /**
- * @description 这是抽象层AbstractRepository类的具体实现，尽管它是一个抽象类，但它实现了AbstractRepository中定义的所有方法。
- * 我们在这个中引入了TypeORM的Repository类，这个类是TypeORM中的一个重要类，它提供了对实体的基本操作。
+ * @description 这是抽象层BaseRepository类的具体实现，尽管它仍然是一个抽象类，但它实现了BaseRepository中定义的所有方法。
+ * 我们在这个类中引入了TypeORM的Repository类，这个类是TypeORM中的一个重要类，它提供了对实体的基本操作能力。
  * 具体见：protected typeormRepository: Repository<ENTITY>;
  * @export
  * @abstract
@@ -29,12 +29,12 @@ import { AbstractBaseEntity } from '../entity/abstract-base.entity';
  * @template FIELDS_REQUIRED_FOR_UPDATE
  * @template AUTO_GENERATED_FIELDS
  */
-export abstract class BaseTypeormEntityRepository<
-  ENTITY extends AbstractBaseEntity,
+export abstract class TypeormRepository<
+  ENTITY extends TypeormBaseEntity,
   ID extends keyof ENTITY,
   FIELDS_REQUIRED_FOR_UPDATE extends keyof ENTITY = ID,
-  AUTO_GENERATED_FIELDS extends keyof ENTITY = ID | keyof AbstractBaseEntity,
-> extends AbstractRepository<
+  AUTO_GENERATED_FIELDS extends keyof ENTITY = ID | keyof TypeormBaseEntity,
+> extends BaseRepository<
   ENTITY,
   ID,
   FindOptionsWhere<ENTITY> | Array<FindOptionsWhere<ENTITY>>,

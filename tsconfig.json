@@ -18,6 +18,7 @@
     { "path": "./packages/auth" },
     { "path": "./packages/nestjs-typeorm" },
     { "path": "./examples/validation-demo" },
-    { "path": "./apps/fastify-swagger" }
+    { "path": "./apps/fastify-swagger" },
+    { "path": "./examples/auth-demo" }
   ]
 }

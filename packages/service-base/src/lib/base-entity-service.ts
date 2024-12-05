@@ -1,13 +1,13 @@
 import { Transactional } from 'typeorm-transactional';
 
-import { AbstractBaseService } from './abstract-base.service';
+import { BaseService } from './base-service';
 import { PaginateConfig, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { ClassConstructor } from 'class-transformer';
 import { ClassTransformOptions } from 'class-transformer/types/interfaces';
 import { map } from '@aiofc/validation';
 import { Never } from '@aiofc/common-types';
 import { ObjectNotFoundException } from '@aiofc/exceptions';
-import { AbstractRepository, IBaseEntity } from '@aiofc/persistence-base';
+import { BaseRepository, IBaseEntity } from '@aiofc/persistence-base';
 /**
  * @description 以泛型类的形式继承了抽象基础服务类AbstractBaseService，
  * 并实现了具体的方法，这些实现方法都带有TypeORM的事务注解@Transactional()，具有事务处理的能力，
@@ -23,7 +23,7 @@ import { AbstractRepository, IBaseEntity } from '@aiofc/persistence-base';
 export class BaseEntityService<
   ENTITY extends IBaseEntity,
   ID extends keyof ENTITY,
-  REPOSITORY extends AbstractRepository<
+  REPOSITORY extends BaseRepository<
     ENTITY,
     ID,
     unknown,
@@ -32,7 +32,7 @@ export class BaseEntityService<
   >,
   FIELDS_REQUIRED_FOR_UPDATE extends keyof ENTITY = ID,
   AUTO_GENERATED_FIELDS extends keyof ENTITY = ID,
-> extends AbstractBaseService<
+> extends BaseService<
   ENTITY,
   ID,
   FIELDS_REQUIRED_FOR_UPDATE,

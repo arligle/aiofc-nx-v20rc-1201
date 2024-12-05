@@ -1,6 +1,6 @@
 import { defaultClsMetadataStore, PresetType, TenantClsStore } from '@aiofc/persistence-base';
 import { getMetadataArgsStorage } from 'typeorm';
-import { AbstractBaseTrackedEntity } from '../../entity/abstract-base-tracked.entity';
+import { TrackedTypeormBaseEntity } from '../../entity/tracked-typeorm-base-entity';
 
 
 interface ClsPresetDecoratorOptions<CLS_STORE extends TenantClsStore> {
@@ -14,7 +14,7 @@ export function ClsPreset<CLS_STORE extends TenantClsStore>(
   return function (object: object, propertyName: string) {
     const metadataArgsStorage = getMetadataArgsStorage();
 
-    if (!(object instanceof AbstractBaseTrackedEntity)) {
+    if (!(object instanceof TrackedTypeormBaseEntity)) {
       throw new TypeError(
         `Cls Preset functionality is available only for instances of BaseEntityHelper class`,
       );

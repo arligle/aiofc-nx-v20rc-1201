@@ -1,6 +1,6 @@
 import { IBaseEntity } from './base-entity-interface';
 // 基础的租户实体接口
-export interface IBaseTenantedEntity extends IBaseEntity {
+export interface ITenantBaseEntity extends IBaseEntity {
   tenantId: string;
 }
 

@@ -5,10 +5,12 @@ import {
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IBaseTrackedEntity } from '@aiofc/persistence-base';
-import { AbstractBaseEntity } from './abstract-base.entity';
+import { ITrackedBaseEntity } from '@aiofc/persistence-base';
+import { TypeormBaseEntity } from './typeorm-base-entity';
 
-export abstract class AbstractBaseTrackedEntity  extends AbstractBaseEntity implements IBaseTrackedEntity
+
+
+export abstract class TrackedTypeormBaseEntity  extends TypeormBaseEntity implements ITrackedBaseEntity
 {
   @ApiProperty({
     type: Date,
