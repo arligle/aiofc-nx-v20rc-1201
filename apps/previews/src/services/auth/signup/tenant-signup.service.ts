@@ -17,16 +17,26 @@ import {
 } from '../../../common/vo/token-payload';
 import { UserService } from '../../users/user.service';
 
+// 使用@Injectable装饰器标记该服务可被依赖注入
 @Injectable()
+// TenantSignupService类继承自AbstractSignupService,使用SignUpByEmailWithTenantCreationRequest作为泛型参数
 export class TenantSignupService extends AbstractSignupService<SignUpByEmailWithTenantCreationRequest> {
+  // 创建一个私有的日志记录器实例
   private readonly logger = new Logger(TenantSignupService.name);
 
+  // 构造函数,注入所需的服务
   constructor(
+    // 注入租户服务,用于处理租户相关操作
     private readonly tenantService: TenantService,
+    // 注入用户认证服务,用于处理用户认证相关操作
     private readonly userAuthService: AbstractAuthUserService,
+    // 注入用户服务,用于处理用户相关操作
     private readonly userService: UserService,
+    // 注入用户租户账户服务,用于处理用户与租户关联的操作
     private readonly userTenantAccountService: UserTenantAccountService,
+    // 注入角色服务,用于处理用户角色相关操作
     private readonly roleService: UserRoleService,
+    // 注入令牌构建服务,用于生成JWT token
     private readonly tokenBuilderService: AbstractTokenBuilderService<
       UserProfile,
       AccessTokenPayload,
@@ -36,13 +46,18 @@ export class TenantSignupService extends AbstractSignupService<SignUpByEmailWith
     super();
   }
 
+  // 使用@Transactional装饰器确保数据库操作的事务性
   @Transactional()
+  // 实现注册方法,接收用户注册信息作为参数
   async signUp(createUserDto: SignUpByEmailWithTenantCreationRequest) {
+    // 通过邮箱查找是否存在已注册用户
     const existingUser = await this.userAuthService.findUserByEmail(
       createUserDto.email,
     );
 
+    // 如果用户已存在,记录警告日志并抛出冲突异常
     if (existingUser) {
+      // 使用logger记录警告信息
       this.logger.warn(
         `User trying to register with same email again: ${createUserDto.email}`,
         {
@@ -51,6 +66,7 @@ export class TenantSignupService extends AbstractSignupService<SignUpByEmailWith
         },
       );
 
+      // 抛出实体创建冲突异常,表明该邮箱已被注册
       throw new ConflictEntityCreationException(
         'User',
         'email',

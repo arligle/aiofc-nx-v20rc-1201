@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@aiofc/nestjs-typeorm';
-import { BaseTypeormTrackedEntityRepository as BaseRepository } from '@aiofc/typeorm';
+import { TrackedTypeormRepository as BaseRepository } from '@aiofc/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Article } from '../../database/entities';
 

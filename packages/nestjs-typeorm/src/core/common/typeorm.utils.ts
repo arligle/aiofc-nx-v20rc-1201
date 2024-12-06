@@ -15,13 +15,28 @@ import { CircularDependencyException } from '../exceptions/circular-dependency.e
 import { EntityClassOrSchema } from '../interfaces/entity-class-or-schema.type';
 import { DEFAULT_DATA_SOURCE_NAME } from '../typeorm.constants';
 
+/**
+ * TypeORM工具函数集合
+ *
+ * @description
+ * 提供了一组用于TypeORM集成的工具函数:
+ * - 生成Repository、DataSource、EntityManager的注入令牌
+ * - 处理数据库连接重试逻辑
+ * - 生成唯一标识符
+ */
+
+/**
+ * TypeORM模块的日志记录器实例
+ */
 const logger = new Logger('TypeOrmModule');
 
 /**
- * This function generates an injection token for an Entity or Repository
- * @param {EntityClassOrSchema} entity parameter can either be an Entity or Repository
- * @param {string} [dataSource='default'] DataSource name
- * @returns {string} The Entity | Repository injection token
+ * 生成实体Repository的注入令牌
+ *
+ * @param entity 实体类或Schema
+ * @param dataSource 数据源配置,默认为'default'
+ * @returns Repository的注入令牌
+ * @throws CircularDependencyException 当检测到循环依赖时
  */
 export function getRepositoryToken(
   entity: EntityClassOrSchema,
@@ -54,9 +69,11 @@ export function getRepositoryToken(
 }
 
 /**
- * This function generates an injection token for an Entity or Repository
- * @param {Function} This parameter can either be an Entity or Repository
- * @returns {string} The Repository injection token
+ * 生成自定义Repository的注入令牌
+ *
+ * @param repository Repository类
+ * @returns 注入令牌字符串
+ * @throws CircularDependencyException 当检测到循环依赖时
  */
 export function getCustomRepositoryToken(repository: Function): string {
   if (repository === null || repository === undefined) {
@@ -66,10 +83,10 @@ export function getCustomRepositoryToken(repository: Function): string {
 }
 
 /**
- * This function returns a DataSource injection token for the given DataSource, DataSourceOptions or dataSource name.
- * @param {DataSource | DataSourceOptions | string} [dataSource='default'] This optional parameter is either
- * a DataSource, or a DataSourceOptions or a string.
- * @returns {string | Function} The DataSource injection token.
+ * 生成DataSource的注入令牌
+ *
+ * @param dataSource 数据源配置,默认为'default'
+ * @returns DataSource的注入令牌
  */
 export function getDataSourceToken(
   dataSource:
@@ -86,14 +103,14 @@ export function getDataSourceToken(
     : `${dataSource.name}DataSource`;
 }
 
-/** @deprecated */
+/** @deprecated 已废弃,请使用getDataSourceToken */
 export const getConnectionToken = getDataSourceToken;
 
 /**
- * This function returns a DataSource prefix based on the dataSource name
- * @param {DataSource | DataSourceOptions | string} [dataSource='default'] This optional parameter is either
- * a DataSource, or a DataSourceOptions or a string.
- * @returns {string | Function} The DataSource injection token.
+ * 获取数据源前缀
+ *
+ * @param dataSource 数据源配置,默认为'default'
+ * @returns 数据源前缀字符串
  */
 export function getDataSourcePrefix(
   dataSource:
@@ -114,10 +131,10 @@ export function getDataSourcePrefix(
 }
 
 /**
- * This function returns an EntityManager injection token for the given DataSource, DataSourceOptions or dataSource name.
- * @param {DataSource | DataSourceOptions | string} [dataSource='default'] This optional parameter is either
- * a DataSource, or a DataSourceOptions or a string.
- * @returns {string | Function} The EntityManager injection token.
+ * 生成EntityManager的注入令牌
+ *
+ * @param dataSource 数据源配置,默认为'default'
+ * @returns EntityManager的注入令牌
  */
 export function getEntityManagerToken(
   dataSource:
@@ -134,6 +151,16 @@ export function getEntityManagerToken(
     : `${dataSource.name}EntityManager`;
 }
 
+/**
+ * 处理数据库连接重试逻辑
+ *
+ * @param retryAttempts 重试次数,默认9次
+ * @param retryDelay 重试延迟时间(毫秒),默认3000ms
+ * @param dataSourceName 数据源名称,默认'default'
+ * @param verboseRetryLog 是否显示详细重试日志,默认false
+ * @param toRetry 自定义重试判断函数
+ * @returns Observable操作符
+ */
 export function handleRetry(
   retryAttempts = 9,
   retryDelay = 3000,
@@ -174,8 +201,19 @@ export function handleRetry(
     );
 }
 
+/**
+ * 获取数据源名称
+ *
+ * @param options 数据源配置选项
+ * @returns 数据源名称
+ */
 export function getDataSourceName(options: DataSourceOptions): string {
   return options && options.name ? options.name : DEFAULT_DATA_SOURCE_NAME;
 }
 
+/**
+ * 生成唯一字符串标识符
+ *
+ * @returns UUID字符串
+ */
 export const generateString = (): string => uuid();

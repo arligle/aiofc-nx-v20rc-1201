@@ -11,9 +11,16 @@ import { pathExists, realpath } from 'fs-extra';
 import { importOrRequireFile } from '../utils/import';
 import { annotateSourceCode, createTypesFile } from '../utils/typescript';
 /**
- * @description 生成类型参数
- * @export
- * @interface GenerateTypesArguments
+ * 生成类型的命令行参数接口
+ *
+ * @description
+ * 定义了生成类型命令所需的参数:
+ * - typesOutputPath: 生成的类型文件输出路径
+ * - watch: 是否监听文件变化
+ * - debounce: 防抖延迟时间
+ * - loaderType: 加载器类型数组
+ * - optionsFile: 可选的配置文件路径
+ * - translationsPath: 翻译文件路径数组
  */
 export interface GenerateTypesArguments {
   typesOutputPath: string;
@@ -24,23 +31,53 @@ export interface GenerateTypesArguments {
   translationsPath: string[];
 }
 
+/**
+ * 翻译数据类型
+ *
+ * @description
+ * 定义了翻译数据的结构:
+ * - translations: 翻译内容
+ * - error: 加载过程中的错误信息
+ * - path: 翻译文件路径
+ */
 type TranslationsType = {
   translations: I18nTranslation;
   error: (I18nTranslation & Error) | null;
   path: string;
 };
+
 /**
- * @description 通过实现 yargs.CommandModule 接口，定义了一个用于生成翻译文件类型的命令行工具。
- * @export
- * @class GenerateTypesCommand
+ * 生成类型的命令行工具类
+ *
+ * @description
+ * 实现了 yargs.CommandModule 接口,提供以下功能:
+ * 1. 定义命令行参数和选项
+ * 2. 处理命令执行逻辑
+ * 3. 支持文件监听和类型自动生成
+ * 4. 错误处理和日志输出
  */
 export class GenerateTypesCommand
   implements yargs.CommandModule<object, GenerateTypesArguments>
 {
+  /** 文件系统监听器实例 */
   fsWatcher: chokidar.FSWatcher | undefined;
+  /** 命令名称 */
   command = 'generate-types';
+  /** 命令描述 */
   describe = 'Generate types for translations. Supports json and yaml files.';
 
+  /**
+   * 构建命令行参数
+   *
+   * @description
+   * 配置命令支持的选项:
+   * - debounce: 防抖时间
+   * - optionsFile: 配置文件路径
+   * - watch: 是否监听文件变化
+   * - typesOutputPath: 类型文件输出路径
+   * - loaderType: 加载器类型
+   * - translationsPath: 翻译文件路径
+   */
   builder(args: yargs.Argv<object>) {
     return args
       .option('debounce', {
@@ -89,6 +126,17 @@ export class GenerateTypesCommand
       });
   }
 
+  /**
+   * 命令处理函数
+   *
+   * @description
+   * 执行类型生成的主要逻辑:
+   * 1. 加载和验证配置
+   * 2. 初始化加载器
+   * 3. 加载翻译文件
+   * 4. 生成类型定义
+   * 5. 处理文件监听(如果启用)
+   */
   async handler(args: yargs.Arguments<GenerateTypesArguments>): Promise<void> {
     const { packageConfig = {}, packageJsonFilePath } =
       (await getPackageConfig()) || {};
@@ -196,6 +244,12 @@ export class GenerateTypesCommand
     }
   }
 
+  /**
+   * 停止文件监听
+   *
+   * @description
+   * 关闭文件系统监听器
+   */
   async stopWatcher() {
     if (this.fsWatcher) {
       await this.fsWatcher.close();
@@ -204,9 +258,15 @@ export class GenerateTypesCommand
 }
 
 /**
- * we do not support nested paths, because listeners will be triggered multiple times
- * and it doesn't really make sense to have the same folder twice
- * */
+ * 验证路径嵌套
+ *
+ * @description
+ * 检查翻译文件路径是否存在嵌套关系:
+ * - 不支持嵌套路径,因为会触发多次监听
+ * - 同一个文件夹不应该被监听多次
+ *
+ * @param paths 需要验证的路径数组
+ */
 function validatePathsNotEmbeddedInEachOther(paths: string[]) {
   for (let i = 0; i < paths.length; i++) {
     const pathToCheck = paths[i];
@@ -223,6 +283,20 @@ function validatePathsNotEmbeddedInEachOther(paths: string[]) {
   }
 }
 
+/**
+ * 监听文件变化
+ *
+ * @description
+ * 使用 chokidar 监听翻译文件的变化:
+ * 1. 初始化文件监听器
+ * 2. 处理文件变化事件
+ * 3. 支持错误处理和防抖
+ *
+ * @param loadersWithPaths 加载器和路径的映射
+ * @param translationsWithPaths 翻译内容和路径的映射
+ * @param args 命令行参数
+ * @returns Promise<FSWatcher> 文件监听器实例
+ */
 function listenForChanges(
   loadersWithPaths: {
     path: string;
@@ -268,6 +342,10 @@ function listenForChanges(
   });
 }
 
+/**
+ * 路径处理工具函数
+ * 处理路径末尾的斜杠,确保路径格式统一
+ */
 function sanitizePath(path: string) {
   // adding trailing slash
   const newPath = path.endsWith('/') ? path : `${path}/`;
@@ -275,12 +353,19 @@ function sanitizePath(path: string) {
   return newPath.startsWith('./') ? newPath.slice(2) : newPath;
 }
 
+/**
+ * 批量处理多个路径
+ */
 function sanitizePaths(paths: string[]) {
   return paths.map((path) => {
     return sanitizePath(path);
   });
 }
 
+/**
+ * 处理文件变更事件的主要函数
+ * 当监听的文件发生变化时,重新生成类型定义
+ */
 function handleFileChangeEvents(
   listenToPaths: string[],
   loadersByPath: {
@@ -298,6 +383,7 @@ function handleFileChangeEvents(
     );
     console.log(chalk.blue(`Re-generating types...`));
 
+    // 收集所有变更的唯一路径
     const uniquePaths = new Set<string>();
 
     for (const changePath of paths) {
@@ -313,6 +399,7 @@ function handleFileChangeEvents(
     }
     let hasError = false;
 
+    // 重新加载每个变更路径的翻译
     for (const path of uniquePaths) {
       const loader = loadersByPath[path];
       try {
@@ -348,6 +435,7 @@ function handleFileChangeEvents(
       return;
     }
 
+    // 合并所有翻译并生成类型
     const mergedTranslations = reduceTranslations(
       translationsWithPaths.map(({ translations }) => translations),
     );
@@ -355,6 +443,10 @@ function handleFileChangeEvents(
   };
 }
 
+/**
+ * 生成并保存类型定义文件
+ * 将翻译对象转换为TypeScript类型定义
+ */
 async function generateAndSaveTypes(
   translations: I18nTranslation,
   args: GenerateTypesArguments,
@@ -392,6 +484,10 @@ async function generateAndSaveTypes(
   }
 }
 
+/**
+ * 自定义防抖函数
+ * 用于限制文件变更事件的触发频率
+ */
 function customDebounce(func: (...args: any[]) => void, wait: number) {
   let args: any[] = [];
   let timeoutId: NodeJS.Timeout;
@@ -422,6 +518,10 @@ function customDebounce(func: (...args: any[]) => void, wait: number) {
   };
 }
 
+/**
+ * 加载所有翻译文件
+ * 使用提供的加载器加载翻译内容
+ */
 async function loadTranslations(
   loaders: {
     loader: I18nLoader<unknown>;
@@ -442,6 +542,10 @@ async function loadTranslations(
   });
 }
 
+/**
+ * 验证并获取选项文件内容
+ * 检查选项文件是否符合要求
+ */
 async function validateAndGetOptionsFile(optionsFile?: string) {
   if (optionsFile) {
     let optionsFileExport;
@@ -483,6 +587,10 @@ async function validateAndGetOptionsFile(optionsFile?: string) {
   }
 }
 
+/**
+ * 验证输入参数
+ * 确保提供的参数有效且完整
+ */
 function validateInputParams(args: GenerateTypesArguments) {
   if (args.loaderType.length !== args.translationsPath.length) {
     console.log(
@@ -507,6 +615,10 @@ function validateInputParams(args: GenerateTypesArguments) {
   }
 }
 
+/**
+ * 验证路径
+ * 确保每个加载器类型都有对应的翻译路径
+ */
 function validatePath(path: string, loaderType: string, index: number) {
   if (path === undefined) {
     console.log(
@@ -521,6 +633,10 @@ function validatePath(path: string, loaderType: string, index: number) {
 
 type Dictionary<T = any> = { [k: string]: T };
 
+/**
+ * 获取package.json配置
+ * 递归向上查找package.json文件
+ */
 async function getPackageConfig(basePath = process.cwd()): Promise<{
   packageJsonFilePath: string;
   packageConfig: Dictionary;
@@ -551,6 +667,10 @@ async function getPackageConfig(basePath = process.cwd()): Promise<{
   return getPackageConfig(parentFolder);
 }
 
+/**
+ * 根据类型获取对应的加载器实例
+ * 支持json和yaml格式的加载器
+ */
 function getLoaderByType(loaderType: string, path: string) {
   switch (loaderType) {
     case 'json': {
@@ -572,6 +692,10 @@ function getLoaderByType(loaderType: string, path: string) {
   }
 }
 
+/**
+ * 合并多个翻译对象
+ * 将所有翻译合并为一个对象
+ */
 function reduceTranslations(translations: I18nTranslation[]) {
   return translations.reduce((acc, t) => mergeTranslations(acc, t), {});
 }

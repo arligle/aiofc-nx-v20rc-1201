@@ -31,18 +31,45 @@ import {
   TypeOrmOptionsFactory,
 } from './interfaces/typeorm-options.interface';
 import { TYPEORM_MODULE_ID, TYPEORM_MODULE_OPTIONS } from './typeorm.constants';
-
+/**
+ * TypeOrmCoreModule 类
+ *
+ * @description
+ * TypeORM的核心模块,负责管理数据库连接和实体管理器。
+ * 提供了两种初始化方式:
+ * 1. forRoot() - 同步初始化
+ * 2. forRootAsync() - 异步初始化
+ *
+ * 主要功能:
+ * - 创建和管理数据源连接
+ * - 提供实体管理器
+ * - 处理应用关闭时的清理工作
+ * - 支持异步配置
+ */
 @Global()
 @Module({})
 export class TypeOrmCoreModule implements OnApplicationShutdown {
+  /**
+   * 日志记录器实例
+   */
   private readonly logger = new Logger('TypeOrmModule');
 
+  /**
+   * 构造函数
+   * @param options - TypeORM模块配置选项
+   * @param moduleRef - 模块引用,用于获取提供者实例
+   */
   constructor(
     @Inject(TYPEORM_MODULE_OPTIONS)
     private readonly options: TypeOrmModuleOptions,
     private readonly moduleRef: ModuleRef,
   ) {}
 
+  /**
+   * 同步初始化TypeORM
+   * @param options - TypeORM配置选项
+   * @returns DynamicModule - 配置好的动态模块
+   */
   static forRoot(options: TypeOrmModuleOptions = {}): DynamicModule {
     const typeOrmModuleOptions = {
       provide: TYPEORM_MODULE_OPTIONS,
@@ -79,6 +106,11 @@ export class TypeOrmCoreModule implements OnApplicationShutdown {
     };
   }
 
+  /**
+   * 异步初始化TypeORM
+   * @param options - 异步配置选项
+   * @returns DynamicModule - 配置好的动态模块
+   */
   static forRootAsync(options: TypeOrmModuleAsyncOptions): DynamicModule {
     const dataSourceProvider = {
       provide: getDataSourceToken(options as DataSourceOptions),
@@ -138,6 +170,10 @@ export class TypeOrmCoreModule implements OnApplicationShutdown {
     };
   }
 
+  /**
+   * 应用关闭时的清理工作
+   * 负责关闭数据库连接
+   */
   async onApplicationShutdown(): Promise<void> {
     const dataSource = this.moduleRef.get<DataSource>(
       getDataSourceToken(this.options as DataSourceOptions) as Type<DataSource>,
@@ -151,6 +187,11 @@ export class TypeOrmCoreModule implements OnApplicationShutdown {
     }
   }
 
+  /**
+   * 创建异步提供者
+   * @param options - 异步配置选项
+   * @returns Provider[] - 提供者数组
+   */
   private static createAsyncProviders(
     options: TypeOrmModuleAsyncOptions,
   ): Provider[] {
@@ -167,6 +208,11 @@ export class TypeOrmCoreModule implements OnApplicationShutdown {
     ];
   }
 
+  /**
+   * 创建异步选项提供者
+   * @param options - 异步配置选项
+   * @returns Provider - 配置提供者
+   */
   private static createAsyncOptionsProvider(
     options: TypeOrmModuleAsyncOptions,
   ): Provider {
@@ -177,7 +223,6 @@ export class TypeOrmCoreModule implements OnApplicationShutdown {
         inject: options.inject || [],
       };
     }
-    // `as Type<TypeOrmOptionsFactory>` is a workaround for microsoft/TypeScript#31603
     const inject = [
       (options.useClass || options.useExisting) as Type<TypeOrmOptionsFactory>,
     ];
@@ -189,6 +234,11 @@ export class TypeOrmCoreModule implements OnApplicationShutdown {
     };
   }
 
+  /**
+   * 创建实体管理器提供者
+   * @param options - 数据源配置选项
+   * @returns Provider - 实体管理器提供者
+   */
   private static createEntityManagerProvider(
     options: DataSourceOptions,
   ): Provider {
@@ -199,6 +249,12 @@ export class TypeOrmCoreModule implements OnApplicationShutdown {
     };
   }
 
+  /**
+   * 创建数据源工厂
+   * @param options - TypeORM配置选项
+   * @param dataSourceFactory - 可选的自定义数据源工厂
+   * @returns Promise<DataSource> - 初始化后的数据源
+   */
   private static async createDataSourceFactory(
     options: TypeOrmModuleOptions,
     dataSourceFactory?: TypeOrmDataSourceFactory,

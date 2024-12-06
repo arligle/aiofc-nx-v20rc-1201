@@ -8,11 +8,25 @@ import { TransformFnParams } from 'class-transformer';
 import { GeneralBadRequestException } from '@aiofc/exceptions';
 import { I18nTranslations } from '../../generated/i18n.generated';
 
+/**
+ * 提取 TransformFnParams 中的必要属性
+ * 排除了 obj、type 和 options 这些不常用的属性
+ */
 type TransformFnParamsEssentials = Omit<
   TransformFnParams,
   'obj' | 'type' | 'options'
 >;
 
+/**
+ * 将验证器定义转换为 i18n 错误对象
+ *
+ * @param validatorDefinition - 验证器定义对象
+ * @param params - 转换函数的必要参数
+ * @param constraint - 验证约束条件
+ * @param overrideDefaultMessage - 覆盖默认错误消息
+ * @param args - 额外的参数
+ * @returns I18n 错误对象
+ */
 function validationDefinitionToI18NError<T, E>(
   validatorDefinition: IValidatorDefinition<T, E>,
   params: TransformFnParamsEssentials,
@@ -20,19 +34,17 @@ function validationDefinitionToI18NError<T, E>(
   overrideDefaultMessage?: string,
   args?: unknown,
 ): I18nValidationError {
-  // it's transforming a message to format -
+  // 将消息格式化为如下形式:
   // "common.validation.MAX_LENGTH|{ "constraints": [ "10" ], "args": {} }"
   const validationMessageFormatted = i18nValidationMessage(
     overrideDefaultMessage ?? validatorDefinition.defaultValidationMessage,
     args,
   )({
-    // this one is not really used and not passed to the message function
+    // 这些参数在 i18nValidationMessage 函数中实际并未使用
     property: params.key,
     value: params.value,
     constraints: constraint === undefined ? [] : [constraint],
-    // this one is not used in the i18nValidationMessage function
     targetName: '',
-    // this one also is not used in the i18nValidationMessage function
     object: {},
   });
 
@@ -46,8 +58,16 @@ function validationDefinitionToI18NError<T, E>(
 }
 
 /**
- * @return void or throw error if invalid
- * */
+ * 验证值并在无效时抛出异常
+ *
+ * @param validatorDefinition - 验证器定义对象
+ * @param fieldName - 字段名称
+ * @param value - 需要验证的值
+ * @param constraint - 验证约束条件
+ * @param overrideDefaultMessage - 覆盖默认错误消息
+ * @param args - 额外的参数
+ * @throws {GeneralBadRequestException} 当验证失败时抛出
+ */
 export function validateAndThrow<T, E>(
   validatorDefinition: IValidatorDefinition<T, E>,
   fieldName: string,
@@ -73,34 +93,43 @@ export function validateAndThrow<T, E>(
 }
 
 /**
- * @return error or undefined if valid
-示例：
-const exampleValidatorDefinition = {
-  name: 'exampleValidator',
-  defaultValidationMessage: 'Value is invalid',
-  validator: (value: string, constraint: number) => value.length <= constraint,
-  decorator: (options: number, validationOptions?: ValidationOptions) => {
-    // ...decorator implementation...
-    return () => {};
-  },
-};
-
-const fieldName = 'exampleField';
-const value = 'exampleValue';
-const constraint = 10;
-const overrideDefaultMessage = 'Value exceeds maximum length';
-const args = {};
-
-const error = validateAndReturnError(
-  exampleValidatorDefinition,
-  fieldName,
-  value,
-  constraint,
-  overrideDefaultMessage,
-  args,
-);
-console.log(error);
- * */
+ * 验证值并返回错误对象(如果无效)
+ *
+ * @example
+ * const exampleValidatorDefinition = {
+ *   name: 'exampleValidator',
+ *   defaultValidationMessage: 'Value is invalid',
+ *   validator: (value: string, constraint: number) => value.length <= constraint,
+ *   decorator: (options: number, validationOptions?: ValidationOptions) => {
+ *     // ...decorator implementation...
+ *     return () => {};
+ *   },
+ * };
+ *
+ * const fieldName = 'exampleField';
+ * const value = 'exampleValue';
+ * const constraint = 10;
+ * const overrideDefaultMessage = 'Value exceeds maximum length';
+ * const args = {};
+ *
+ * const error = validateAndReturnError(
+ *   exampleValidatorDefinition,
+ *   fieldName,
+ *   value,
+ *   constraint,
+ *   overrideDefaultMessage,
+ *   args,
+ * );
+ * console.log(error);
+ *
+ * @param validatorDefinition - 验证器定义对象
+ * @param fieldName - 字段名称
+ * @param value - 需要验证的值
+ * @param constraint - 验证约束条件
+ * @param overrideDefaultMessage - 覆盖默认错误消息
+ * @param args - 额外的参数
+ * @returns 验证错误对象,如果验证通过则返回 undefined
+ */
 export function validateAndReturnError<T, E>(
   validatorDefinition: IValidatorDefinition<T, E>,
   fieldName: string,
@@ -125,6 +154,16 @@ export function validateAndReturnError<T, E>(
       );
 }
 
+/**
+ * 抛出验证异常
+ *
+ * @param validatorDefinition - 验证器定义对象
+ * @param params - 转换函数的必要参数
+ * @param constraint - 验证约束条件
+ * @param overrideDefaultMessage - 覆盖默认错误消息
+ * @param args - 额外的参数
+ * @throws {GeneralBadRequestException} 总是抛出验证错误
+ */
 function throwValidationException<T, E>(
   validatorDefinition: IValidatorDefinition<T, E>,
   params: TransformFnParamsEssentials,
@@ -142,4 +181,3 @@ function throwValidationException<T, E>(
 
   throw new GeneralBadRequestException(validationError);
 }
-

@@ -4,7 +4,7 @@ import { SAMLConfiguration } from '../../database/entities';
 import { ClsService } from '@aiofc/nestjs-cls';
 import { InjectDataSource } from '@aiofc/nestjs-typeorm';
 import { TenantClsStore } from '@aiofc/persistence-base';
-import { BaseTypeormTenantedEntityRepository as BaseRepository } from '@aiofc/typeorm';
+import { TenantTrackedTypeormRepository as BaseRepository } from '@aiofc/typeorm';
 @Injectable()
 export class SamlConfigurationRepository extends BaseRepository<
   SAMLConfiguration,

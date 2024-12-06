@@ -29,6 +29,20 @@ import {
 import { map } from '@aiofc/validation';
 import { RoleType } from '../../database/entities/roles/types/default-role.enum';
 
+/**
+ * 角色管理控制器
+ *
+ * @description
+ * 该控制器处理角色相关的HTTP请求:
+ *
+ * 1. 装饰器说明
+ * - @ApiTags('Roles') - Swagger文档标签
+ * - @Controller - 定义路由前缀'roles'和API版本'1'
+ * - @ApiBearerAuth - 启用Bearer Token认证
+ *
+ * 2. 构造函数
+ * - 注入UserRoleService用于处理角色业务逻辑
+ */
 @ApiTags('Roles')
 @Controller({
   path: 'roles',
@@ -38,6 +52,22 @@ import { RoleType } from '../../database/entities/roles/types/default-role.enum'
 export class RolesController {
   constructor(private readonly userRoleService: UserRoleService) {}
 
+  /**
+   * 分页获取所有角色
+   *
+   * @description
+   * GET /roles 端点:
+   *
+   * 1. 权限控制
+   * - 仅管理员和超级管理员可访问
+   * - 需要'platform.roles.read'权限
+   *
+   * 2. 参数说明
+   * - @Paginate query - 分页查询参数
+   *
+   * 3. 返回值
+   * - 分页后的角色列表(不含权限信息)
+   */
   @Get()
   @Roles<RoleType>([RoleType.ADMIN, RoleType.SUPER_ADMIN])
   @Permissions('platform.roles.read')

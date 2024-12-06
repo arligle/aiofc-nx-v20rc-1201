@@ -1,4 +1,5 @@
 apps/fastify-swagger
 examples/nestjs-cls-demo
 examples/validation-demo
-# apps/previews
+examples/auth-demo
+apps/previews

@@ -11,5 +11,10 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*.ts"],
-  "references": [{ "path": "../nestjs-cls/tsconfig.lib.json" }]
+  "references": [
+    { "path": "../i18n/tsconfig.lib.json" },
+    { "path": "../exceptions/tsconfig.lib.json" },
+    { "path": "../validation/tsconfig.lib.json" },
+    { "path": "../nestjs-cls/tsconfig.lib.json" }
+  ]
 }

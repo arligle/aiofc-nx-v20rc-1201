@@ -6,47 +6,59 @@ import {
   ValidationOptions,
   IsOptional,
 } from 'class-validator';
-
+/**
+ * 嵌套属性验证选项接口
+ *
+ * @description
+ * 定义了用于验证嵌套属性的选项:
+ * - required: 是否必需,默认为 true
+ * - validationOptions: class-validator 的验证选项
+ * - classType: 嵌套属性的类型构造函数
+ */
 interface ValidateNestedPropertyOptions<T> {
   required?: boolean;
   validationOptions?: ValidationOptions;
   classType: new () => T;
 }
+
 /**
- * @description 配置类的Root属性必须用ValidateNested 和 Type这两个装饰器修饰校验和类型转换，
- * 否则会导致yaml配置文件的层级嵌套无法解析
- * @template T
- * @param {
- *   required = true,
- *   validationOptions = {},
- *   classType,
- * }
- * @return {*}
+ * 嵌套属性验证装饰器
+ *
+ * @description
+ * 用于验证配置类中的嵌套属性:
+ * - 使用 ValidateNested 验证嵌套对象
+ * - 使用 Type 指定属性类型
+ * - 根据 required 选项添加 IsObject 或 IsOptional 验证
+ *
  * @example
  * export default class RootConfig {
-      @ValidateNestedProperty({ classType: AppConfig })
-      public readonly app!: AppConfig;
-    }
+ *   @ValidateNestedProperty({ classType: AppConfig })
+ *   public readonly app!: AppConfig;
+ * }
  */
 export const ValidateNestedProperty = <T>({
   required = true,
   validationOptions = {},
   classType,
 }: ValidateNestedPropertyOptions<T>) => {
-  /**
-   * Type 是一个来自 class-transformer 库的装饰器，用于指定属性的类型。
-   * 它接受一个返回类型构造函数的函数作为参数。
-   * 在这段代码中，传递给 Type 装饰器的函数返回 classType，
-   * 这意味着该属性的类型将被指定为 classType。
-   * 这个装饰器通常用于在对象转换过程中，确保属性的类型能够被正确识别和处理。
+  /*
+   * 创建装饰器数组:
+   * 1. ValidateNested - 验证嵌套对象
+   * 2. Type - 指定属性类型,用于对象转换
    */
   const decorators = [ValidateNested(validationOptions), Type(() => classType)];
 
+  /*
+   * 根据 required 选项添加额外验证:
+   * - true: 添加 IsObject 验证,确保值为对象
+   * - false: 添加 IsOptional 验证,允许属性为可选
+   */
   if (required) {
     decorators.push(IsObject(validationOptions));
   } else {
     decorators.push(IsOptional(validationOptions));
   }
 
+  // 使用 applyDecorators 组合所有装饰器
   return applyDecorators(...decorators);
 };

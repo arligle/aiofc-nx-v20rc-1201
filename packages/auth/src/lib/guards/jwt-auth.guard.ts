@@ -11,6 +11,10 @@ import { IAccessTokenPayload } from '../vo/payload';
 import { AbstractTenantResolutionService } from '../multi-tenancy/abstract-tenant-resolution.service';
 import { ClsService } from '@aiofc/nestjs-cls';
 
+/**
+ * JwtAuthGuard 守卫
+ * 用于验证JWT令牌的认证守卫
+ */
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   private readonly logger = new Logger(JwtAuthGuard.name);
@@ -25,10 +29,27 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
+
   /**
-   * Verify the token is valid
-   * @param context {ExecutionContext}
-   * @returns super.canActivate(context)
+   * 验证JWT令牌是否有效的主要方法
+   *
+   * 实现流程:
+   * 1. 检查是否跳过认证
+   * 2. 获取HTTP请求对象
+   * 3. 如果跳过认证:
+   *    - 仅解析租户ID并存储到CLS中
+   *    - 直接返回true
+   * 4. 否则执行完整认证流程:
+   *    - 从请求头提取JWT令牌
+   *    - 如果令牌不存在则抛出401错误
+   *    - 验证令牌有效性获取payload
+   *    - 解析租户ID
+   *    - 验证用户是否属于该租户
+   *    - 将用户信息存储到CLS中
+   * 5. 调用父类canActivate完成认证
+   *
+   * @param context ExecutionContext - NestJS执行上下文
+   * @returns Promise<boolean> - 返回认证是否通过
    */
   override async canActivate(context: ExecutionContext): Promise<boolean> {
     const skipAuth = this.reflector.getAllAndOverride<boolean>(SKIP_AUTH, [

@@ -49,127 +49,161 @@ import { AuthService, SamlService } from '../../services';
 @SkipAuth()
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
-    private readonly clsService: ClsService<ClsStore>,
-    private readonly signUpService: AbstractSignupService<SignUpByEmailRequest>,
-    private readonly samlService: SamlService,
-    private readonly i18: I18nService,
+    private readonly authService: AuthService, // 注入认证服务
+    private readonly clsService: ClsService<ClsStore>, // 注入CLS服务用于处理请求上下文
+    private readonly signUpService: AbstractSignupService<SignUpByEmailRequest>, // 注入注册服务
+    private readonly samlService: SamlService, // 注入SAML服务用于SSO登录
+    private readonly i18: I18nService, // 注入国际化服务
   ) {}
 
-  @Post('signup')
-  @ApiConflictResponsePaginated(
-    'Appears when user with such email already exists',
+  @Post('signup')  // 定义一个POST请求路由，路径为'signup'
+  @ApiConflictResponsePaginated(  // 这是一个Swagger装饰器,用于在API文档中标注当发生409冲突错误时的分页响应格式。通常用于表示资源已存在的情况,比如这里是用户邮箱已存在的场景。
+    'Appears when user with such email already exists',  // 当用户邮箱已存在时返回409冲突响应
   )
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.CREATED)  // 设置响应状态码为201 Created
   public async signUp(
-    @I18n() i18n: I18nContext<I18nTranslations>,
-    @Body() request: SignUpByEmailRequest,
-  ): Promise<SignUpByEmailResponseDTO> {
-    // depends on chosen workflow you can respond with tokens here and let user in
+    @I18n() i18n: I18nContext<I18nTranslations>,  // 注入i18n国际化上下文
+    @Body() request: SignUpByEmailRequest,  // 获取请求体,类型为SignUpByEmailRequest
+  ): Promise<SignUpByEmailResponseDTO> {  // 返回Promise<SignUpByEmailResponseDTO>类型
+    // 根据选择的工作流,可以在这里返回token让用户直接登录
     return this.signUpService.signUp(request).then((response) => {
-      const responseDTO = map(response, SignUpByEmailResponseDTO);
+      const responseDTO = map(response, SignUpByEmailResponseDTO);  // 将响应映射为DTO
       return {
         ...responseDTO,
-        message: i18n.t('user.FINISHED_REGISTRATION'),
+        message: i18n.t('user.FINISHED_REGISTRATION'),  // 添加注册完成的国际化消息
       };
     });
   }
 
-  @Post('tenant-signup')
-  @ApiConflictResponsePaginated(
-    'Appears when user with such email already exists',
+  @Post('tenant-signup')  // 定义一个POST请求路由,路径为'tenant-signup'
+  @ApiConflictResponsePaginated(  // 当发生409冲突错误时的分页响应格式
+    'Appears when user with such email already exists',  // 当用户邮箱已存在时返回409冲突响应
   )
-  @HttpCode(HttpStatus.CREATED)
-  public async signUpWithTenantCreation(
-    @I18n() i18n: I18nContext<I18nTranslations>,
-    @Body() request: SignUpByEmailWithTenantCreationRequest,
-  ): Promise<SignUpByEmailResponseDTO> {
-    // depends on chosen workflow you can respond with tokens here and let user in
-    return this.signUpService.signUp(request).then((response) => {
-      const responseDTO = map(response, SignUpByEmailResponseDTO);
+  @HttpCode(HttpStatus.CREATED)  // 设置响应状态码为201 Created
+  public async signUpWithTenantCreation(  // 定义租户创建注册方法
+    @I18n() i18n: I18nContext<I18nTranslations>,  // 注入i18n国际化上下文
+    @Body() request: SignUpByEmailWithTenantCreationRequest,  // 获取请求体,类型为SignUpByEmailWithTenantCreationRequest
+  ): Promise<SignUpByEmailResponseDTO> {  // 返回Promise<SignUpByEmailResponseDTO>类型
+    // 根据选择的工作流,可以在这里返回token让用户直接登录
+    return this.signUpService.signUp(request).then((response) => {  // 调用注册服务的signUp方法
+      const responseDTO = map(response, SignUpByEmailResponseDTO);  // 将响应映射为DTO
       return {
         ...responseDTO,
-        message: i18n.t('user.FINISHED_REGISTRATION'),
+        message: i18n.t('user.FINISHED_REGISTRATION'),  // 添加注册完成的国际化消息
       };
     });
   }
 
   /**
-   @description depends on chosen workflow you can respond with tokens here and let user in,
-    or you can respond with some message and let user to login
-    default behavior is to force user to login and make sure his password is correct
+   * 根据选择的工作流,可以在这里返回token让用户直接登录,
+   * 或者返回一些消息让用户去登录
+   * 默认行为是强制用户登录并确保密码正确
    */
-  @Post('approve-signup')
-  @HttpCode(HttpStatus.OK)
+  @Post('approve-signup')  // 定义一个POST请求路由,路径为'approve-signup'
+  @HttpCode(HttpStatus.OK)  // 设置响应状态码为200 OK
   public async approveSignup(
-    @I18n() i18n: I18nContext,
-    @Body() request: ApproveSignUpRequest,
+    @I18n() i18n: I18nContext,  // 注入i18n国际化上下文
+    @Body() request: ApproveSignUpRequest,  // 获取请求体,类型为ApproveSignUpRequest
   ) {
+    // 调用认证服务的approveUserEmail方法来验证用户邮箱
     await this.authService.approveUserEmail(request.id, request.code);
 
+    // 返回邮箱验证成功的国际化消息
     return {
       message: this.i18.t('user.SUCCESSFULLY_APPROVED_EMAIL'),
     };
   }
 
-  @Post('signin')
-  @HttpCode(HttpStatus.OK)
+  /**
+   * 用户登录接口
+   * @param i18n - 国际化上下文
+   * @param request - 登录请求体,包含email和password
+   * @returns 返回登录响应DTO,包含token信息和成功消息
+   */
+  @Post('signin') // 定义POST请求路由,路径为'signin'
+  @HttpCode(HttpStatus.OK) // 设置响应状态码为200 OK
   public async signIn(
-    @I18n() i18n: I18nContext,
-    @Body() request: SignInRequest,
-  ): Promise<SignInResponseDTO> {
+    @I18n() i18n: I18nContext, // 注入i18n国际化上下文
+    @Body() request: SignInRequest, // 获取请求体,类型为SignInRequest
+  ): Promise<SignInResponseDTO> { // 返回Promise<SignInResponseDTO>类型
     return this.authService
-      .signIn(request.email, request.password)
+      .signIn(request.email, request.password) // 调用认证服务的signIn方法进行登录
       .then((tokens) => {
-        const responseDTO = map(tokens, SignInResponseDTO);
+        const responseDTO = map(tokens, SignInResponseDTO); // 将token映射为响应DTO
         return {
           ...responseDTO,
-          message: this.i18.t('user.SUCCESSFULLY_LOGGED_IN'),
+          message: this.i18.t('user.SUCCESSFULLY_LOGGED_IN'), // 添加登录成功的国际化消息
         };
       });
   }
 
-  @Post('sso/saml/login')
-  @HttpCode(HttpStatus.OK)
+  /**
+   * SAML SSO登录接口
+   * @param req - Fastify请求对象
+   * @param res - Fastify响应对象
+   * @param request - SAML登录初始化请求
+   * @returns 返回SAML登录响应
+   */
+  @Post('sso/saml/login') // 定义POST请求路由,路径为'sso/saml/login'
+  @HttpCode(HttpStatus.OK) // 设置响应状态码为200 OK
   async samlLogin(
-    @Req() req: FastifyRequest,
-    @Res() res: FastifyReply,
-    @Body() request: InitiateSamlLoginRequest,
+    @Req() req: FastifyRequest, // 注入Fastify请求对象
+    @Res() res: FastifyReply, // 注入Fastify响应对象
+    @Body() request: InitiateSamlLoginRequest, // 获取请求体,类型为InitiateSamlLoginRequest
   ) {
+    // 调用SAML服务的login方法进行登录,传入请求参数和租户ID
     return this.samlService.login(request, req, res, {
       ...request,
-      tenantId: this.clsService.get().tenantId,
+      tenantId: this.clsService.get().tenantId, // 从CLS服务获取租户ID
     });
   }
 
-  @Post('sso/saml/ac')
-  @HttpCode(HttpStatus.OK)
+  /**
+   * SAML SSO登录确认接口
+   * @param req - Fastify请求对象
+   * @param res - Fastify响应对象
+   * @returns 返回SAML登录响应
+   */
+  @Post('sso/saml/ac') // 定义POST请求路由,路径为'sso/saml/ac'
+  @HttpCode(HttpStatus.OK) // 设置响应状态码为200 OK
   async samlAcknowledge(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
+    // 从请求体中解码base64编码的RelayState字符串
     const relayState = decodeBase64StringObjectFromUrl(
       (req.body as any)?.RelayState,
     );
 
+    // 将租户ID设置到CLS服务中
     this.clsService.set('tenantId', relayState.tenantId as string);
 
+    // 将relayState映射为SAML登录初始化请求对象
     const initiateRequest = map(relayState, InitiateSamlLoginRequest);
 
+    // 验证请求对象
     const validationErrors = await validate(initiateRequest);
 
-    // manual validation is required because data come in base64 encoded string
+    // 由于数据来自base64编码字符串,需要手动验证
     if (validationErrors.length > 0) {
       throw new I18nValidationException(validationErrors);
     }
 
+    // 调用SAML服务的login方法完成登录
     return this.samlService.login(initiateRequest, req, res);
   }
 
-  @SkipAuth()
-  @Post('refresh-access-token')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(RefreshJwtAuthGuard)
+  /**
+   * 刷新访问令牌的接口
+   * @param user - 刷新令牌载荷,包含用户邮箱等信息
+   * @returns 返回新的访问令牌
+   */
+  @SkipAuth() // 跳过身份验证
+  @Post('refresh-access-token') // 定义POST请求路由,路径为'refresh-access-token'
+  @HttpCode(HttpStatus.OK) // 设置响应状态码为200 OK
+  @UseGuards(RefreshJwtAuthGuard) // 使用刷新令牌守卫进行验证
   public async refreshAccessToken(@CurrentUser() user: IRefreshTokenPayload) {
+    // 调用认证服务刷新访问令牌
     const token = await this.authService.refreshAccessToken(user.email);
 
+    // 返回新的访问令牌
     return {
       accessToken: token,
     };
