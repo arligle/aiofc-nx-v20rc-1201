@@ -13,3 +13,10 @@ export abstract class AbstractSignupService<
   // @returns Promise<SignUpByEmailResponse> - 返回注册响应的Promise
   public abstract signUp(createUserDto: T): Promise<SignUpByEmailResponse>;
 }
+
+/*
+ {
+      provide: AbstractSignupService,
+      useClass: TenantSignupService,
+    }
+ */

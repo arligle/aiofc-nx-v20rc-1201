@@ -8,6 +8,12 @@ import { BaseSignUpByEmailRequest } from '../../controllers/auth/vo/sign-up.dto'
 import { JwtTokensPayload } from '@aiofc/auth';
 
 export default abstract class AbstractAuthUserService {
+  /*
+    {
+      provide: AbstractAuthUserService, // 令牌服务
+      useClass: AuthUserService, // 令牌服务实现
+    },
+  */
   public abstract findUserByEmail(email: string): Promise<Maybe<UserProfile>>;
 
   public abstract createUserByEmail(

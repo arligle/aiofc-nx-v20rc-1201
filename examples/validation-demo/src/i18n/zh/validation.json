@@ -26,5 +26,6 @@
   "MAX_STRING_LENGTH": "太长了，最多不得超过 {constraints.0} 个字符",
   "MIN_STRING_LENGTH": "太短了，必须最少为 {constraints.0} 个字符",
   "ARRAY_MAX_SIZE": "太长了，必须是最大 {constraints.0} 个元素",
-  "ARRAY_MIN_SIZE": "太短了，必须是最少 {constraints.0} 个元素"
+  "ARRAY_MIN_SIZE": "太短了，必须是最少 {constraints.0} 个元素",
+  "AGE_MUST_NOT_BE_LESS_THAN_18": "年龄必须大于 18 岁"
 }

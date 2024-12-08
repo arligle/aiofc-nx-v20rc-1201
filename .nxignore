@@ -3,3 +3,4 @@ examples/nestjs-cls-demo
 examples/validation-demo
 examples/auth-demo
 apps/previews
+apps/platform

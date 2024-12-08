@@ -3,7 +3,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { FastifyInstance } from 'fastify';
-import { generateRandomId } from '../utils/crypto';
+import { generateRandomId } from '@aiofc/utils';
 import { ClassSerializerInterceptor, VersioningType } from '@nestjs/common';
 import { AppConfig } from '../config/app.config';
 import { Logger, LoggerErrorInterceptor } from '@aiofc/logger';

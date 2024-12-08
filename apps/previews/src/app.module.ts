@@ -24,7 +24,7 @@ import { ClsPresetSubscriber, OptimisticLockingSubscriber } from '@aiofc/typeorm
 import AuthUserService from './services/users/auth-user.service';
 import { MultiTenantTokenBuilderService } from './services/auth/token/multi-tenant-token-builder.service';
 import { AccessCheckService } from './services/roles/access-check.service';
-import { AbstractSignupService } from './services/auth/signup/signup.service.interface';
+import { AbstractSignupService } from './services/auth/signup/abstract-signup.service';
 import { APP_GUARD } from '@nestjs/core';
 import { TenantSignupService } from './services/auth/signup/tenant-signup.service';
 

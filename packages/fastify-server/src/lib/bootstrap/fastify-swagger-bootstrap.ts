@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 // import { useContainer } from 'class-validator';
 import { buildFastifyAdapter } from './setup';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppConfig } from '../config/app.config';
 import { Logger, LoggerErrorInterceptor } from '@aiofc/logger';
 import { initializeTransactionalContext } from 'typeorm-transactional';
@@ -16,14 +16,26 @@ import {
 } from '@aiofc/exceptions';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from '@aiofc/i18n';
 import { DEFAULT_VALIDATION_OPTIONS } from '@aiofc/validation';
-import { callOrUndefinedIfException } from '../utils/functions';
-import { setupSwagger, SwaggerConfig } from '@aiofc/swagger-utils';
-export async function fastifySwaggerBootstrap(module: any) {
 
+import { setupSwagger, SwaggerConfig } from '@aiofc/swagger-utils';
+import { callOrUndefinedIfException } from '../utils/functions';
+
+// import { getTransactionalContext } from 'typeorm-transactional/dist/common';
+
+
+export async function fastifySwaggerBootstrap(module: any) {
+  // getTransactionalContext(); //  transition to use AsyncCls instead of ClsHook
   initializeTransactionalContext();
+    //  transition to use AsyncCls instead of ClsHook
+  // const transactionalContext = getTransactionalContext();
+
+  // // this is needed for tests to prevent multiple initializations
+  // if (!transactionalContext) {
+  //   initializeTransactionalContext();
+  // }
 const app = await NestFactory.create<NestFastifyApplication>(
     module,
-    new FastifyAdapter(),
+    buildFastifyAdapter(),
   );
   // const app = await NestFactory.create<NestFastifyApplication>(
   //   module,

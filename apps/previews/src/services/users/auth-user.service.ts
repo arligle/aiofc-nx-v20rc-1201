@@ -86,6 +86,20 @@ export default class AuthUserService extends AbstractAuthUserService {
     };
   }
 
+  /**
+   * 通过邮箱查找用户
+   *
+   * @description
+   * 这是一个事务性方法,用于根据邮箱地址查找用户信息
+   *
+   * @param email - 用户邮箱地址
+   * @returns 如果找到用户则返回UserProfile对象,否则返回undefined
+   *
+   * 实现逻辑:
+   * 1. 调用userService.findOneByEmail方法查询用户
+   * 2. 如果未找到用户则返回undefined
+   * 3. 如果找到用户则返回用户信息
+   */
   @Transactional()
   override async findUserByEmail(email: string): Promise<Maybe<UserProfile>> {
     const user = await this.userService.findOneByEmail(email);

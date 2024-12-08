@@ -9,27 +9,56 @@ import { JwtTokensPayload } from '@aiofc/auth';
 import { DEFAULT_CREATE_ENTITY_EXCLUDE_LIST } from '@aiofc/typeorm';
 import { Expose } from 'class-transformer';
 
-// BaseSignUpByEmailRequest 类继承自 UserProfile,但排除了一些字段
+/**
+ * 基础通过邮件注册请求信息类
+ *
+ * 功能说明:
+ * - 继承自 UserProfile 类,但排除了一些不需要的字段
+ * - 用于处理基础的邮箱注册请求
+ * - 添加了重复密码验证功能
+ *
+ * 继承说明:
+ * 使用 OmitType 从 UserProfile 中排除以下字段:
+ * - DEFAULT_CREATE_ENTITY_EXCLUDE_LIST: 默认的实体创建排除字段列表
+ * - id: 数据库主键字段
+ * - version: 版本控制字段
+ * - status: 状态字段
+ * - userTenantsAccounts: 用户-租户关联字段
+ */
 export class BaseSignUpByEmailRequest extends OmitType(UserProfile, [
-  ...DEFAULT_CREATE_ENTITY_EXCLUDE_LIST,  // 排除默认的实体创建排除列表
-  'id',        // 排除id字段
-  'version',   // 排除版本字段
-  'status',    // 排除状态字段
-  'userTenantsAccounts', // 排除用户租户账号关联字段
+  ...DEFAULT_CREATE_ENTITY_EXCLUDE_LIST,
+  'id',
+  'version',
+  'status',
+  'userTenantsAccounts',
 ] as const) {
   /**
-   * @description 重复密码字段
-   * 在前后端都进行验证是个好习惯,即使前端验证出现问题也能避免垃圾数据进入数据库
-   * */
-  @PasswordLocalized()  // 使用本地化的密码验证装饰器
+   * repeatedPassword 字段
+   *
+   * 功能说明:
+   * - 用于验证用户两次输入的密码是否一致
+   * - 在前后端都进行验证,确保数据的正确性
+   *
+   * 装饰器说明:
+   * @PasswordLocalized - 使用本地化的密码格式验证
+   * @MatchesWithProperty - 验证与password字段是否匹配
+   * @IsStringCombinedLocalized - 使用本地化的字符串验证
+   *
+   * 字段说明:
+   * - 类型为string
+   * - 使用!表示该字段为必填项
+   * - 当两次密码不匹配时返回validation.REPEAT_PASSWORD_DOESNT_MATCH错误
+   */
+  @PasswordLocalized()
   @MatchesWithProperty(
     BaseSignUpByEmailRequest,
     (s) => s.password,
     {
-    message: 'validation.REPEAT_PASSWORD_DOESNT_MATCH', // 当重复密码不匹配时的错误消息
-  })
-  @IsStringCombinedLocalized() // 使用本地化的字符串组合验证装饰器
-  repeatedPassword!: string;  // 重复密码字段,使用!表示该字段是必需的
+      message: 'validation.REPEAT_PASSWORD_DOESNT_MATCH',
+    }
+  )
+  @IsStringCombinedLocalized()
+  repeatedPassword!: string;
 }
 
 /**

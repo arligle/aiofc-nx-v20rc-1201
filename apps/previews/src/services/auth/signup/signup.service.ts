@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AbstractSignupService } from './signup.service.interface';
+import { AbstractSignupService } from './abstract-signup.service';
 import {
   BaseSignUpByEmailRequest,
   SignUpByEmailResponse,

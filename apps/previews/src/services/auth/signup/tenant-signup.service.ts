@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AbstractSignupService } from './signup.service.interface';
+import { AbstractSignupService } from './abstract-signup.service';
 import { SignUpByEmailWithTenantCreationRequest } from '../../../controllers/auth/vo/sign-up.dto';
 import { ConflictEntityCreationException } from '@aiofc/exceptions';
-import { hashPassword } from '@aiofc/crypto';
 import { Transactional } from 'typeorm-transactional';
 import AbstractAuthUserService from '../abstract-auth-user.service';
 import { TenantService } from '../../tenants/tenant.service';
@@ -16,15 +15,12 @@ import {
   RefreshTokenPayload,
 } from '../../../common/vo/token-payload';
 import { UserService } from '../../users/user.service';
+import { hashPassword } from '@aiofc/utils';
 
-// 使用@Injectable装饰器标记该服务可被依赖注入
 @Injectable()
-// TenantSignupService类继承自AbstractSignupService,使用SignUpByEmailWithTenantCreationRequest作为泛型参数
 export class TenantSignupService extends AbstractSignupService<SignUpByEmailWithTenantCreationRequest> {
-  // 创建一个私有的日志记录器实例
   private readonly logger = new Logger(TenantSignupService.name);
 
-  // 构造函数,注入所需的服务
   constructor(
     // 注入租户服务,用于处理租户相关操作
     private readonly tenantService: TenantService,
@@ -46,9 +42,7 @@ export class TenantSignupService extends AbstractSignupService<SignUpByEmailWith
     super();
   }
 
-  // 使用@Transactional装饰器确保数据库操作的事务性
   @Transactional()
-  // 实现注册方法,接收用户注册信息作为参数
   async signUp(createUserDto: SignUpByEmailWithTenantCreationRequest) {
     // 通过邮箱查找是否存在已注册用户
     const existingUser = await this.userAuthService.findUserByEmail(
@@ -65,7 +59,6 @@ export class TenantSignupService extends AbstractSignupService<SignUpByEmailWith
           ignore: true,
         },
       );
-
       // 抛出实体创建冲突异常,表明该邮箱已被注册
       throw new ConflictEntityCreationException(
         'User',
@@ -85,7 +78,7 @@ export class TenantSignupService extends AbstractSignupService<SignUpByEmailWith
     const tenant = await this.tenantService.setupTenant(
       createUserDto.companyName,
       createUserDto.companyIdentifier,
-      userProfile,
+      userProfile.id,
     );
 
     const adminRole = await this.roleService.findDefaultAdminRole();

@@ -32,7 +32,7 @@ import {
 import { ApproveSignUpRequest } from './vo/approve.dto';
 import { I18nTranslations } from '../../generated/i18n.generated';
 import { SignInRequest, SignInResponseDTO } from './vo/sign-in.dto';
-import { AbstractSignupService } from '../../services/auth/signup/signup.service.interface';
+import { AbstractSignupService } from '../../services/auth/signup/abstract-signup.service';
 import { InitiateSamlLoginRequest } from './vo/saml.dto';
 import { ClsStore } from '../../common/vo/cls-store';
 import { validate } from 'class-validator';
@@ -49,23 +49,24 @@ import { AuthService, SamlService } from '../../services';
 @SkipAuth()
 export class AuthController {
   constructor(
-    private readonly authService: AuthService, // 注入认证服务
-    private readonly clsService: ClsService<ClsStore>, // 注入CLS服务用于处理请求上下文
-    private readonly signUpService: AbstractSignupService<SignUpByEmailRequest>, // 注入注册服务
-    private readonly samlService: SamlService, // 注入SAML服务用于SSO登录
-    private readonly i18: I18nService, // 注入国际化服务
+    // 注入你需要使用的提供者
+    private readonly authService: AuthService, // 认证服务
+    private readonly clsService: ClsService<ClsStore>, // CLS服务用于处理请求上下文
+    private readonly signUpService: AbstractSignupService<SignUpByEmailRequest>, // 注册服务
+    private readonly samlService: SamlService, // SAML服务用于SSO登录
+    private readonly i18: I18nService, // 国际化服务
   ) {}
 
-  @Post('signup')  // 定义一个POST请求路由，路径为'signup'
-  @ApiConflictResponsePaginated(  // 这是一个Swagger装饰器,用于在API文档中标注当发生409冲突错误时的分页响应格式。通常用于表示资源已存在的情况,比如这里是用户邮箱已存在的场景。
-    'Appears when user with such email already exists',  // 当用户邮箱已存在时返回409冲突响应
+  @Post('signup')
+  @ApiConflictResponsePaginated(
+    'Appears when user with such email already exists',
   )
   @HttpCode(HttpStatus.CREATED)  // 设置响应状态码为201 Created
   public async signUp(
     @I18n() i18n: I18nContext<I18nTranslations>,  // 注入i18n国际化上下文
     @Body() request: SignUpByEmailRequest,  // 获取请求体,类型为SignUpByEmailRequest
   ): Promise<SignUpByEmailResponseDTO> {  // 返回Promise<SignUpByEmailResponseDTO>类型
-    // 根据选择的工作流,可以在这里返回token让用户直接登录
+    // TODO: 根据选择的工作流,可以在这里返回token让用户直接登录
     return this.signUpService.signUp(request).then((response) => {
       const responseDTO = map(response, SignUpByEmailResponseDTO);  // 将响应映射为DTO
       return {

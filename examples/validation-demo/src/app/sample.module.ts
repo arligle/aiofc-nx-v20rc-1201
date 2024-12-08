@@ -7,7 +7,7 @@ import { MappingController } from './mapping.controller';
 @Module({
   imports: [
     I18nModule.forRoot({
-      fallbackLanguage: 'zh',
+      fallbackLanguage: 'en',
       loaders: [
         new I18nJsonLoader({
           path: path.join(__dirname, './i18n/'),
